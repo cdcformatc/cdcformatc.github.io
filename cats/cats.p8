@@ -20,8 +20,6 @@ function _init()
 	other_cat=cat2
 end
 
-
-
 function _update()
 	if (not game_over) then
 		check_swap()
@@ -76,6 +74,7 @@ function make_cat(n)
 	c.y=60
 	c.dy=0
 	c.dx=0
+	c.t=0
 	c.s=make_sprites(c.n*16)
 	if (c.n==1) then
 		c.x+=12
@@ -83,8 +82,6 @@ function make_cat(n)
 	end
 	return c
 end
-
-
 
 function check_btns(cat)
 	local p=cat.p
@@ -115,7 +112,7 @@ function check_btns(cat)
 end
 
 function move_cat(cat)
-	-- do graviry
+	-- do gravity
 	cat.dy+=dy_gravity
 
 	-- check user input
@@ -142,11 +139,12 @@ function move_cat(cat)
 		cat.dy=0
 	end
 
-	cat.falling=true
 	if (cat.y > 120) then
 		cat.dy=0
 		cat.y=120
 		cat.falling=false
+	else
+		cat.falling=true
 	end
 
 	if (cat.x < 0) then
@@ -157,6 +155,12 @@ function move_cat(cat)
 	if (cat.x > 120) then
 		cat.dx=0
 		cat.x=120
+	end
+	
+	if (cat.dx==0 and cat.dy==0) then
+		cat.t+=1
+	else
+		cat.t=0
 	end
 end
 
@@ -177,8 +181,12 @@ function draw_cat(cat)
 	elseif (cat.dy==0 and cat.dx==0) then
 		if (cat.falling) then
 			do_draw(cat.s.fall,cat)
+		elseif cat.t>60*3 then
+			do_draw(cat.s.loaf,cat)
+		elseif cat.t>30 then
+		 do_draw(cat.s.sit,cat)
 		else
-			do_draw(cat.s.sit,cat)
+			do_draw(cat.s.stand,cat)
 		end
 	else
 		do_draw(cat.s.stand,cat)
@@ -204,9 +212,9 @@ function swap_cats(what,player)
 
 	-- play cat sfx
 	if (player==0) then
-		sfx(2+main_cat.n)
+	 sfx(2+main_cat.n)
 	else
-		sfx(2+other_cat.n)
+	 sfx(2+other_cat.n)
 	end
 
 	main_cat.p=0
@@ -250,6 +258,8 @@ function debug_cat(cat)
 	printn(cat.dx,7,x,y)
 	y+=c_h
 	printn(cat.dy,7,x,y)
+	y+=c_h
+	printn(cat.t,7,x,y)
 end
 __gfx__
 f0ff0ff0ffff0ff0fff0fff000fff00f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
