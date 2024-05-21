@@ -20,20 +20,7 @@ function _init()
 	other_cat=cat2
 end
 
-function check_swap()
-	if (btnp(🅾️,0)) then
-		swap_cats(0,0)
-	end 
-	if (btnp(❎,0)) then
-		swap_cats(1,0)
-	end
-	if (btnp(🅾️,1)) then
-		swap_cats(0,1)
-	end
-	if (btnp(❎,1)) then
-		swap_cats(1,1)
-	end
-end
+
 
 function _update()
 	if (not game_over) then
@@ -97,24 +84,7 @@ function make_cat(n)
 	return c
 end
 
-function swap_cats(what,player)
-	if (what==0) then
-		main_cat=cat1
-		other_cat=cat2
-	else
-		main_cat=cat2
-		other_cat=cat1
-	end
 
-	if (player==0) then	
-	 sfx(2+main_cat.n)
-	else
-	 sfx(2+other_cat.n)
-	end
-
-	main_cat.p=0
-	other_cat.p=1
-end
 
 function check_btns(cat)
 	local p=cat.p
@@ -220,6 +190,47 @@ function draw_cats()
 	draw_cat(main_cat)
 end
 -->8
+-- cat swap control
+
+function swap_cats(what,player)
+	-- swap cats
+	if (what==0) then
+		main_cat=cat1
+		other_cat=cat2
+	else
+		main_cat=cat2
+		other_cat=cat1
+	end
+
+	-- play cat sfx
+	if (player==0) then
+		sfx(2+main_cat.n)
+	else
+		sfx(2+other_cat.n)
+	end
+
+	main_cat.p=0
+	other_cat.p=1
+end
+
+function check_swap()
+	-- check if swap button pressed
+	if (btnp(🅾️,0)) then
+		swap_cats(0,0)
+	end 
+	if (btnp(❎,0)) then
+		swap_cats(1,0)
+	end
+	if (btnp(🅾️,1)) then
+		swap_cats(0,1)
+	end
+	if (btnp(❎,1)) then
+		swap_cats(1,1)
+	end
+end
+-->8
+
+
 function printn(s,n,x,y)
 	print(sub(s,0,n),x,y)
 end
