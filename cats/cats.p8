@@ -45,26 +45,7 @@ function _update()
 	end
 end
 
-function printn(s,n,x,y)
-	print(sub(s,0,n),x,y)
-end
 
-function debug_cat(cat)
-	c_w=4
-	c_h=6
-	x=cat.n*8*c_w
-	y=0
-
-	print(cat.n,x,y)
-	y+=c_h
-	printn(cat.x,7,x,y)
-	y+=c_h
-	printn(cat.y,7,x,y)
-	y+=c_h
-	printn(cat.dx,7,x,y)
-	y+=c_h
-	printn(cat.dy,7,x,y)
-end
 
 function _draw()
 	cls(5)
@@ -237,6 +218,27 @@ end
 function draw_cats()
 	draw_cat(other_cat)
 	draw_cat(main_cat)
+end
+-->8
+function printn(s,n,x,y)
+	print(sub(s,0,n),x,y)
+end
+
+function debug_cat(cat)
+	c_w=4
+	c_h=6
+	x=cat.n*8*c_w
+	y=0
+
+	print(cat.n,x,y)
+	y+=c_h
+	printn(cat.x,7,x,y)
+	y+=c_h
+	printn(cat.y,7,x,y)
+	y+=c_h
+	printn(cat.dx,7,x,y)
+	y+=c_h
+	printn(cat.dy,7,x,y)
 end
 __gfx__
 f0ff0ff0ffff0ff0fff0fff000fff00f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
