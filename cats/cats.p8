@@ -174,8 +174,8 @@ function make_cat(n)
 		c.flip_h=true
 		c.lazy_factor=1
 		c.pal_swaps={}
-		c.pal_swaps.flip = {{13,9},{14,4}}
-		c.pal_swaps.noflip = {{14,9},{13,4}}
+		c.pal_swaps.flip = {[13]=9,[14]=4}
+		c.pal_swaps.noflip = {[14]=9,[13]=4}
 	else
 		--c.pal_swaps={{4,0},{7,0},{9,0}}
 		c.lazy_factor=1.25
@@ -324,7 +324,8 @@ function draw_cat(cat)
 
 	-- swap palette, draw sprite, unswap palette
 	swap_pal(cat)
-	spr(get_sprite(cat),cat.x,cat.y,1,1,cat.flip_h)
+	local s=get_sprite(cat)
+	spr(s,cat.x,cat.y,1,1,cat.flip_h)
 	reset_pal()
 end
 
@@ -334,11 +335,6 @@ function draw_cats()
 end
 
 -- palette fun
-function do_swap_pal(s)
-	--printh("swap "..s[1].." "..s[2])
-	pal(s[1],s[2])
-end
-
 function reset_pal()
 	pal()
 	-- set black not transparent
@@ -350,11 +346,11 @@ end
 function swap_pal(cat)
 	local swaps=cat.pal_swaps
 	if (swaps) then
-		printh(cat.n.." swaps")
+		--printh(cat.n.." swaps")
 		if cat.flip_h then
-			foreach(swaps.flip,do_swap_pal)
+			pal(swaps.flip)
 		else
-			foreach(swaps.noflip,do_swap_pal)
+			pal(swaps.noflip)
 		end
 	end
 end
