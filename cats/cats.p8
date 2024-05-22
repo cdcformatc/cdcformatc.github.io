@@ -78,6 +78,11 @@ sit_time=0.5*60
 loaf_time=3*60
 sleep_time=6*60
 
+-- animation constants
+-- speeds: lower is faster
+max_ani_spd=1.5
+min_ani_spd=4
+
 -- cat_states
 state_init=1
 state_unknown=2
@@ -95,16 +100,16 @@ function is_idle_state(state)
 end
 
 local sprite_tbl = {
-	3, 	--state_init
-	3,	--state_unknown
-	3,	--state_dead
-	0,	--state_standing
-	5,	--state_jumping
-	6,	--state_falling
-	0,	--state_running
-	1,	--state_sitting
-	2,	--state_loafing
-	4,	--state_sleeping
+	{3},     --state_init
+	{3},     --state_unknown
+	{3},     --state_dead
+	{0},     --state_standing
+	{5},     --state_jumping
+	{6},     --state_falling
+	{5,6}, --state_running
+	{1},     --state_sitting
+	{2},     --state_loafing
+	{4},     --state_sleeping
 }
 
 function do_unswap_pal(s)
@@ -130,7 +135,22 @@ function cat_speed(cat)
 end
 
 function get_sprite(cat)
-	return sprite_tbl[cat.state]+(cat.n*16)
+	local ani=sprite_tbl[cat.state]
+	local dur=#ani
+	-- calc ani speed based on cat speed
+	spd=max(max_ani_spd,min_ani_spd-cat_speed(cat))
+	-- speed can not go below 1
+	spd=max(1, spd)
+
+	if cat.t%5==0 then
+		--printh(cat.dx.." "..cat.dy.." "..spd)
+	end
+
+	-- find frame of animation
+	local f=(round((cat.t+1+dur)/spd)-1)%dur
+
+	-- find sprite for frame and cat
+	return ani[f+1]+16*cat.n
 end
 
 function make_cat(n)
