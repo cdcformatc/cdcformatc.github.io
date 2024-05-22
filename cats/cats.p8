@@ -268,26 +268,6 @@ function draw_cat(cat)
 	if (cat.dx>0) cat.flip_h=false
 	
 	spr(get_sprite(cat),cat.x,cat.y,1,1,cat.flip_h)
-
-	--if (game_over) then
-		--do_draw(cat.s.dead,cat)
-	--elseif (cat.dy<0) then
-	--	do_draw(cat.s.fall,cat)
-	--elseif (cat.dy>0) then
-		--do_draw(cat.s.jump,cat)
-	--elseif (cat.dy==0 and cat.dx==0) then
-		--if (cat.falling) then
-			--do_draw(cat.s.fall,cat)
-		--elseif cat.t>60*3 then
-			--do_draw(cat.s.loaf,cat)
-		--elseif cat.t>30 then
-			--do_draw(cat.s.sit,cat)
-		--else
-			--do_draw(cat.s.stand,cat)
-		--end
-	--else
-		--do_draw(cat.s.stand,cat)
-	--end
 end
 
 function draw_cats()
