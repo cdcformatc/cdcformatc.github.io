@@ -108,12 +108,12 @@ local sprite_tbl = {
 }
 
 function do_unswap_pal(s)
-	--printh("unswap "..s[1].." "..s[1])
+	printh("unswap "..s[1].." "..s[1])
 	pal(s[1],s[1])
 end
 
 function do_swap_pal(s)
-	--printh("swap "..s[1].." "..s[2])
+	printh("swap "..s[1].." "..s[2])
 	pal(s[1],s[2])
 end
 
@@ -291,9 +291,9 @@ function draw_cat(cat)
 	if (cat.dx>0) cat.flip_h=false
 	
 	-- swap palette, draw sprite, unswap palette
-	swap_pal(cat.pal_swaps)
+	--swap_pal(cat.pal_swaps)
 	spr(get_sprite(cat),cat.x,cat.y,1,1,cat.flip_h)
-	unswap_pal(cat.pal_swaps)
+	--unswap_pal(cat.pal_swaps)
 end
 
 function draw_cats()
