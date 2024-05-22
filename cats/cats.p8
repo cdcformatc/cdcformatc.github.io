@@ -8,10 +8,8 @@ function _init()
 	debug=false
 	printh("init")
 
-	-- set beige transparent
-	palt(15, true)
-	-- set black not transparent
-	palt(0, false)
+	-- set palette
+	reset_pal()
 
 	-- set game state
 	game_over=false
@@ -124,8 +122,12 @@ function do_swap_pal(s)
 	pal(s[1],s[2])
 end
 
-function unswap_pal(swaps)
-	if (swaps) foreach(swaps,do_unswap_pal)
+function reset_pal()
+	pal()
+	-- set black not transparent
+	palt(0, false)
+	-- set beige transparent
+	palt(15, true)
 end
 
 function swap_pal(swaps)
