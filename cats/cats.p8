@@ -66,6 +66,7 @@ dy_down=1*dy_gravity
 
 dx_move=2
 ddx_air=0.888
+ddx_air=0.950
 ddx_slow=.625
 
 max_dx=4
