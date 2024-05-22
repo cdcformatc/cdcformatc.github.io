@@ -1,0 +1,14 @@
+blog 2
+2024-05-22
+
+i knew i was making a game. i just did not know what kind of game it would be.
+
+i think i had settled on the idea that cats would feature prominently in the game somehow fairly early. i have two cats so i thought it would only make sense to put both of them into my game!
+i thought about how i would include multiple cats in a game and one of my first ideas was an RPG like game where you try to direct the cats to fight off enemies. but i didn't really like the idea of hurting my cats in a video game. i also thought about the complexities of programming the cat behaviour. if they attack and defend autonomously without much input from the user then i would have to give them a brain, on top of programming the enemy behaviour as well. not that it isn't a bad idea or an insurmountable problem, it is just a little more complex than i had envisioned. 
+
+i like platformer games that have puzzle aspects. and a platformer is probably one of the most simple games to make and to play. everyone has played mario and everyone speaks that language. 
+i thought of how i would incorporate a puzzle aspect into the game and i had an idea that you would have to move blocks to get around some hazard. then one of my cats pushed something off of the table. at this point i knew what my game would be. 
+
+i thought about other puzzle platformers, one of my favorites being Portal and in particular the co-op campaign in Portal 2. in Portal 2 co-op two players control two robots that work together to proceed through the levels. in most of the sections the robots are separated and one robot is stuck somewhere while the other robot has to figure out how to get to a button or to place a portal or something to get the other robot unstuck. i thought it would be cool if the cats would at some point have to separate and one would have to push a button or move a box or something that would allow the other cat to advance. 
+this seems like a pretty strong concept for a game! i can conceptualize how i can separate the level design from the game programming. i know that i can spend most of the time up front figuring out the game itself, character movement, interactable items, hazards, enemies, etc, and the level design can follow. i know that i can have a "game" that only has a few levels. conceivably i could have other people doing level design! once all the puzzle pieces are made then other people who aren't me could design the puzzles! this is my way of saying that i am not super confident in my puzzle making ability. 
+but one level is technically still a game! 

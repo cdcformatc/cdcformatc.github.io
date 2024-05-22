@@ -1,0 +1,24 @@
+2024-05-21
+
+hello and welcome to my dev blog for PROJECT LIGHTNING
+
+i had zero aptitude for programming before university and i barely got by in my introductory programming classes. i mostly blame this on the languages they chose to teach, first it was C++ and then it was C. 
+if you have no knowledge of those programming languages believe me when i say they are not the most beginner friendly. they also do not tend to yield very interesting results for the beginner. for anything beyond a command line text interface you have to use one of many disparate GUI libraries.
+that didn't stop me from making games, limited to text input and output there is a lot left to the imagination.
+
+during this time period i was experimenting with making video games in flash. i was much more successful with flash and actionscript. it had a priority towards the visuals, which made for much more interesting games. the first game i made that anyone but me played was a flash game where the player moved a dot on a star field, trying to avoid enemy dots that chased after the player. if you survived long enough then you moved to the next level where one more enemy spawned on a circle around the player. before long the circle of enemies was impossible to penetrate and you would die, although some players were able to find strategies to first escape the wall of enemies and then to wrangle the enemies into a small herd which could be easily avoided. 
+i focused a lot more on the programming aspects of the flash games i made, the graphics were almost an after thought. this did not stop me from making impressive visuals though, i focused mostly on making cool looking particle effects. the dot chasing game was not any different, the player and enemies had a long tail that would follow the head of the "worm". this along with the backdrop being a simple star field gave the game it's name "SPACE WORMS". 
+
+i made many toy games that were not much more than particle simulations, including a fountain of heart particles i made for my now wife for valentines day.
+
+because flash made combining visuals and programs so easy, i was able to skip past all the graphical user interface libraries that i struggled with early on in my programming career. everything was packaged up in one bundle. this is what i was looking for when considering how i was going to make PROJECT LIGHTNING. 
+there are so many options out there, i had previously re-made SPACE WORMS in both in Python using Pygame and C++ using SDL. I considered using Pygame because of my love for the Python language. but there is a problem with that which is how do i distrubute the game, how do people actually play it? i didn't want to force people to download Python and a bunch of libraries just to play my game, and i also didn't want to have to make players download a sketchy .exe either! not to mention the nightmare of cross-platform compilation. 
+
+so python and c++ were out, so i looked into game engines that supported an export to HTML5. this to me is the ideal method to get a game into the hands of players. with HTML5 and/or javascript, any computer with a modern browser would be able to run my game. and all that it would require is a service to host an html file and probably a javascript file. 
+there are SO MANY of these HTML5/JavaScript visual engines, i don't even want to go into all of them. i will give a mention to Unity, which i knew would provide me with an infinite amount of support to create basically anything that i could ever want to make ever. but i went another route.
+
+i don't even remember entirely how i found PICO-8, i can do my best to remember. for some reason i found myself on an artist's web page where they were selling pixel-based fonts that were quite impressive. someone had made a comment to the artist asking about the licensing or format or something like if they could get a PNG that they could import as a sprite sheet to PICO-8. i don't know why i was intrigued by this commenter asking this poor artist about some obscure platform, but i looked up PICO-8.
+and it was perfect. 
+
+PICO-8 embraces minimalism in so many ways. from the fixed color palette of 16 colors to the maximum size of a game cart, PICO-8 is the polar opposite of Unity. i knew that the limitations would help foster creativity and cut down on distractions and rabbit holes that i know that i will fall down. i also knew that the platform had everything i needed to make a game. and thats all i needed. the retro aesthetic doesn't hurt either.
+so please join my journey! and play the game! hopefully one of us has fun. 
