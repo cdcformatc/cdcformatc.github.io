@@ -257,6 +257,7 @@ function set_cat_state(cat)
 			new_state=state_running
 		else
 			local idle_time = cat.t*cat.lazy_factor
+			new_state=state_standing
 			if (idle_time>=sit_time) new_state=state_sitting
 			if (idle_time>=loaf_time) new_state=state_loafing
 			if (idle_time>=sleep_time) new_state=state_sleeping
