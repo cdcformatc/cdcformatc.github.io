@@ -190,9 +190,13 @@ function check_btns(cat)
 	if (btn(➡️,p)) then
 		d.x+=dx_move
 	end
-	if (btnp(⬆️,p) and not cat.falling) then
-		sfx(0)
-		d.y+=dy_jump
+	--printh(cat.dy)
+	if (btnp(⬆️,p)) then
+		if (is_on_floor(cat)) then
+			sfx(0)
+			d.y+=dy_jump
+			--printh("jump")
+		end
 	end
 	if (btnp(⬇️,p)) then
 		d.y+=dy_down
