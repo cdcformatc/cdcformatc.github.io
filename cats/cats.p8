@@ -63,7 +63,8 @@ end
 dy_gravity=0.2
 
 dy_jump=-18*dy_gravity
-dy_down=dy_gravity
+dy_float=-2*dy_gravity
+dy_down=1*dy_gravity
 
 dx_move=2
 ddx_air=0.888
@@ -197,6 +198,9 @@ function check_btns(cat)
 			sfx(0)
 			d.y+=dy_jump
 			--printh("jump")
+		elseif (is_falling(cat)) then
+			d.y+=dy_float
+			--printh("float")
 		end
 	end
 	if (btnp(⬇️,p)) then
