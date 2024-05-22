@@ -125,6 +125,10 @@ function swap_pal(swaps)
 	if (swaps) foreach(swaps,do_swap_pal)
 end
 
+function cat_speed(cat)
+	return sqrt(cat.dx^2+cat.dy^2)
+end
+
 function get_sprite(cat)
 	return sprite_tbl[cat.state]+(cat.n*16)
 end
