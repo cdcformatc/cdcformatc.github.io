@@ -20,6 +20,7 @@ function _init()
 	other_cat=cat2
 end
 
+
 function _update()
 	if (not game_over) then
 		check_swap()
@@ -29,7 +30,6 @@ function _update()
 		if (btnp(5,0) or btnp(5,1)) _init()
 	end
 end
-
 
 
 function _draw()
@@ -46,24 +46,59 @@ function _draw()
 	end
 end
 
+
 -->8
+-- cat logic
+
+-- movement constants
 dy_gravity=0.2
 
 dy_jump=-18*dy_gravity
 dy_down=dy_gravity
 
 dx_move=2
+ddx_air=0.888
 ddx_slow=.625
 
-function make_sprites(base)
-	s={}
-	s.stand=base
-	s.jump=base
-	s.fall=base
-	s.sit=base+1
-	s.loaf=base+2
-	s.dead=base+3
-	return s
+max_dx=4
+max_dy=8
+
+-- timer constants
+sit_time=0.5*60
+loaf_time=3*60
+sleep_time=6*60
+
+-- cat_states
+state_init=1
+state_unknown=2
+state_dead=3
+state_standing=4
+state_jumping=5
+state_falling=6
+state_running=7
+state_sitting=8
+state_loafing=9
+state_sleeping=10
+
+function is_idle_state(state)
+	return (state==state_sitting or state==state_loafing or state==state_sleeping)
+end
+
+local sprite_tbl = {
+	3, 	--state_init
+	3,	--state_unknown
+	3,	--state_dead
+	0,	--state_standing
+	5,	--state_jumping
+	6,	--state_falling
+	0,	--state_running
+	1,	--state_sitting
+	2,	--state_loafing
+	4,	--state_sleeping
+}
+
+function get_sprite(cat)
+	return sprite_tbl[cat.state]+(cat.n*16)
 end
 
 function make_cat(n)
@@ -75,10 +110,15 @@ function make_cat(n)
 	c.dy=0
 	c.dx=0
 	c.t=0
-	c.s=make_sprites(c.n*16)
-	if (c.n==1) then
+	c.state=state_init
+	
+	if (c.n == 1) then
+		-- move cat1 on init
 		c.x+=12
 		c.flip_h=true
+		c.lazy_factor=1
+	else
+		c.lazy_factor=1.25
 	end
 	return c
 end
@@ -111,6 +151,10 @@ function check_btns(cat)
 	return d
 end
 
+function is_on_floor(cat)
+	return cat.y >= 120
+end
+
 function move_cat(cat)
 	-- do gravity
 	cat.dy+=dy_gravity
@@ -123,74 +167,117 @@ function move_cat(cat)
 	cat.dx+=d.x
 
 	-- apply x friction
-	cat.dx*=ddx_slow
+	if (is_on_floor(cat)) then
+		cat.dx*=ddx_slow
+	else
+		cat.dx*=ddx_air
+	end
 
 	-- cap speed
 	if (abs(cat.dx)<.1) cat.dx=0
-	if (cat.dy>100) cat.dy=100
-	if (cat.dy<-100) cat.dy=-100
+	
+	if (cat.dx>max_dx) cat.dx=max_dx
+	if (cat.dx<-max_dx) cat.dx=-max_dx
+	if (cat.dy>max_dy) cat.dy=max_dy
+	if (cat.dy<-max_dy) cat.dy=-max_dy
 
 	-- finally apply speed
 	cat.y+=cat.dy
 	cat.x+=cat.dx
 
-	if (cat.y < 0) then
+	-- cat is on the ceiling
+	if (cat.y <= 0) then
 		cat.y=0
 		cat.dy=0
 	end
 
-	if (cat.y > 120) then
+	-- set cat on the floor
+	if (is_on_floor(cat)) then
 		cat.dy=0
 		cat.y=120
-		cat.falling=false
-	else
-		cat.falling=true
 	end
 
+	-- left bound
 	if (cat.x < 0) then
 		cat.dx=0
 		cat.x=0
 	end
 
+	-- right bound
 	if (cat.x > 120) then
 		cat.dx=0
 		cat.x=120
 	end
 	
-	if (cat.dx==0 and cat.dy==0) then
-		cat.t+=1
-	else
-		cat.t=0
-	end
+	set_cat_state(cat)
 end
 
-function do_draw(sprt,cat)
-	spr(sprt,cat.x,cat.y,1,1,cat.flip_h)
+function set_cat_state(cat)
+	local old_state=cat.state
+	local new_state=state_unknown
+
+	if (is_on_floor(cat)) then
+		printh("n: "..cat.n.."is_on_floor")
+		if (cat.dx!=0) then
+			new_state=state_running
+		else
+			local idle_time = cat.t*cat.lazy_factor
+			if (idle_time>=sit_time) new_state=state_sitting
+			if (idle_time>=loaf_time) new_state=state_loafing
+			if (idle_time>=sleep_time) new_state=state_sleeping
+		end
+	else
+		printh("n: "..cat.n.."is in air")
+		-- cat is in the air
+		if (cat.dy>0) then 
+			new_state=state_falling
+		else
+			new_state=state_jumping
+		end
+	end
+	
+	printh("n: "..cat.n.." dx"..cat.dx.." dy"..cat.dy)
+	printh("old: "..old_state.." new "..new_state)
+
+	if (new_state!=old_state and new_state!=state_unknown) then
+		-- set state
+		cat.state=new_state
+		
+		if (not is_idle_state(new_state)) then
+			-- reset idle timer
+			cat.t=0
+		end
+	else
+		-- increment idle timer
+		cat.t+=1
+	end
 end
 
 function draw_cat(cat)
 	if (cat.dx<0) cat.flip_h=true
 	if (cat.dx>0) cat.flip_h=false
+	
+	spr(get_sprite(cat),cat.x,cat.y,1,1,cat.flip_h)
 
-	if (game_over) then
-		do_draw(cat.s.dead,cat)
-	elseif (cat.dy<0) then
-		do_draw(cat.s.fall,cat)
-	elseif (cat.dy>0) then
-		do_draw(cat.s.jump,cat)
-	elseif (cat.dy==0 and cat.dx==0) then
-		if (cat.falling) then
-			do_draw(cat.s.fall,cat)
-		elseif cat.t>60*3 then
-			do_draw(cat.s.loaf,cat)
-		elseif cat.t>30 then
-		 do_draw(cat.s.sit,cat)
-		else
-			do_draw(cat.s.stand,cat)
-		end
-	else
-		do_draw(cat.s.stand,cat)
-	end
+	--if (game_over) then
+		--do_draw(cat.s.dead,cat)
+	--elseif (cat.dy<0) then
+	--	do_draw(cat.s.fall,cat)
+	--elseif (cat.dy>0) then
+		--do_draw(cat.s.jump,cat)
+	--elseif (cat.dy==0 and cat.dx==0) then
+		--if (cat.falling) then
+			--do_draw(cat.s.fall,cat)
+		--elseif cat.t>60*3 then
+			--do_draw(cat.s.loaf,cat)
+		--elseif cat.t>30 then
+			--do_draw(cat.s.sit,cat)
+		--else
+			--do_draw(cat.s.stand,cat)
+		--end
+	--else
+		--do_draw(cat.s.stand,cat)
+	--end
 end
 
 function draw_cats()
@@ -251,6 +338,8 @@ function debug_cat(cat)
 
 	print(cat.n,x,y)
 	y+=c_h
+	print(cat.state,x,y)
+	y+=c_h
 	printn(cat.x,7,x,y)
 	y+=c_h
 	printn(cat.y,7,x,y)
@@ -262,22 +351,22 @@ function debug_cat(cat)
 	printn(cat.t,7,x,y)
 end
 __gfx__
-f0ff0ff0ffff0ff0fff0fff000fff00f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0fff0000f0ff0000fff00f000ffff0ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0fff0a0a0fff0a0af0f00000000000ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0fff00000fff0000f0f0a0a0000000ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000000ff0f0000ff0ff000000fff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000000fff00000ff0fff00ff0fff0a0a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0ffff0fff000f0ff000000ff0fff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00fff00ff000f00f00000000f0ff0ff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-f4ff9ff4ffff9ff4fff9fff444fff44f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-4fff4444f4ff4444fff99f444ffff4ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-4fff4a4a4fff4a4af4f44444994449ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-4fff44444fff4444f4f4a4a4944944ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-944944ff4f4944ff4ff444444fff4444000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-994449fff44449ff4fff44ff4fff4a4a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-4ffff4fff944f4ff944494ff4fff4444000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-44fff44ff994f44f99444444f4ff9ff4000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+f0ff0ff0ffff0ff0fff0fff000fff00fffffffffffff0ff0ffff0ff0000000000000000000000000000000000000000000000000000000000000000000000000
+0fff0000f0ff0000fff00f000ffff0ffffffffff0fff00000fff0000000000000000000000000000000000000000000000000000000000000000000000000000
+0fff0a0a0fff0a0af0f00000000000fffff0fff0f0ff0a0af0ff0a0a000000000000000000000000000000000000000000000000000000000000000000000000
+0fff00000fff0000f0f0a0a0000000fffff00f00f0ff0000f0ff0000000000000000000000000000000000000000000000000000000000000000000000000000
+000000ff0f0000ff0ff000000fff0000fff00000f00000fff00000ff000000000000000000000000000000000000000000000000000000000000000000000000
+000000fff00000ff0fff00ff0fff0a0a00000000f000000ff00000ff000000000000000000000000000000000000000000000000000000000000000000000000
+0ffff0fff000f0ff000000ff0fff000000000000f0ffff0ff0fff0ff000000000000000000000000000000000000000000000000000000000000000000000000
+00fff00ff000f00f00000000f0ff0ff00000000000ffffff0ffff00f000000000000000000000000000000000000000000000000000000000000000000000000
+f4ff9ff4ffff9ff4fff9fff444fff44fffffffffffff9ff400000000000000000000000000000000000000000000000000000000000000000000000000000000
+4fff4444f4ff4444fff99f444ffff4ffffffffff4fff444400000000000000000000000000000000000000000000000000000000000000000000000000000000
+4fff4a4a4fff4a4af4f44444994449fffff9fff4f4ff4a4a00000000000000000000000000000000000000000000000000000000000000000000000000000000
+4fff44444fff4444f4f4a4a4944944fffff99f44f4ff444400000000000000000000000000000000000000000000000000000000000000000000000000000000
+944944ff4f4944ff4ff444444fff4444fff44444f94944ff00000000000000000000000000000000000000000000000000000000000000000000000000000000
+994449fff44449ff4fff44ff4fff4a4a44444444f944494f00000000000000000000000000000000000000000000000000000000000000000000000000000000
+4ffff4fff944f4ff944494ff4fff444494449444f9ffff4f00000000000000000000000000000000000000000000000000000000000000000000000000000000
+44fff44ff994f44f99444444f4ff9ff49944444444ffffff00000000000000000000000000000000000000000000000000000000000000000000000000000000
 __label__
 88888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
 88888eeeeee888777777888888888888888888888888888888888888888888888888888888888888888ff8ff8888228822888222822888888822888888228888
