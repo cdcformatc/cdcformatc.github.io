@@ -1,6 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
+-- cats!
+local version=0.2
+
 function _init()
 	debug=true
 
@@ -34,7 +37,12 @@ end
 
 function _draw()
 	cls(5)
+	
+	local vstr="v"..version
+	print(vstr,128-(#vstr-1)*char_width,0,12)
+	
 	draw_cats()
+	
 	if debug then
 		debug_cat(cat1)
 		debug_cat(cat2)
@@ -324,30 +332,34 @@ function check_swap()
 	end
 end
 -->8
+--debug and printing
+char_width=5
+char_height=6
 
+function round(x)
+	return flr(x+.5)
+end
 
 function printn(s,n,x,y)
 	print(sub(s,0,n),x,y)
 end
 
 function debug_cat(cat)
-	c_w=4
-	c_h=6
-	x=cat.n*8*c_w
+	x=cat.n*7*char_width
 	y=0
 
 	print(cat.n,x,y)
-	y+=c_h
+	y+=char_height
 	print(cat.state,x,y)
-	y+=c_h
+	y+=char_height
 	printn(cat.x,7,x,y)
-	y+=c_h
+	y+=char_height
 	printn(cat.y,7,x,y)
-	y+=c_h
+	y+=char_height
 	printn(cat.dx,7,x,y)
-	y+=c_h
+	y+=char_height
 	printn(cat.dy,7,x,y)
-	y+=c_h
+	y+=char_height
 	printn(cat.t,7,x,y)
 end
 __gfx__
