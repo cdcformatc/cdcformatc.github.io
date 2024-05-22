@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- cats!
-local version="0.2.1"
+local version="0.2.2"
 
 function _init()
 	debug=false
