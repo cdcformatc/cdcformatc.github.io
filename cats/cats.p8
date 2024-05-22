@@ -209,11 +209,11 @@ function is_on_floor(cat)
 end
 
 function move_cat(cat)
+	-- check user input
+	local d=check_btns(cat)
+
 	-- do gravity
 	cat.dy+=dy_gravity
-
-	-- check user input
-	d=check_btns(cat)
 
 	-- apply user input
 	cat.dy+=d.y
