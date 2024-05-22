@@ -58,9 +58,9 @@ end
 -- cat logic
 
 -- movement constants
-dy_gravity=0.2
+dy_gravity=0.4
 
-dy_jump=-18*dy_gravity
+dy_jump=-15*dy_gravity
 dy_float=-2*dy_gravity
 dy_down=1*dy_gravity
 
@@ -251,6 +251,9 @@ function move_cat(cat)
 	else
 		cat.dx*=ddx_air
 	end
+	
+	--apply y friction
+	cat.dy*=.99
 
 	-- cap speed
 	if (abs(cat.dx)<min_dx) cat.dx=0
