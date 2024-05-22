@@ -225,6 +225,14 @@ function is_falling(cat)
 	return cat.state==state_falling
 end
 
+function is_jumping(cat)
+	return cat.state==state_jumping
+end
+
+function is_airborne(cat)
+	return is_falling(cat) or is_jumping(cat)
+end
+
 function move_cat(cat)
 	-- check user input
 	local d=check_btns(cat)
