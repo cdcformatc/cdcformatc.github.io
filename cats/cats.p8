@@ -6,6 +6,7 @@ local version="0.2.1"
 
 function _init()
 	debug=false
+	printh("init")
 
 	-- set beige transparent
 	palt(15, true)
