@@ -11,7 +11,7 @@ function _init()
 	palt(15, true)
 	-- set black not transparent
 	palt(0, false)
-	
+
 	-- set game state
 	game_over=false
 
@@ -37,12 +37,12 @@ end
 
 function _draw()
 	cls(5)
-	
+
 	local vstr="v"..version
 	print(vstr,128-(#vstr-1)*char_width,0,12)
-	
+
 	draw_cats()
-	
+
 	if debug then
 		debug_cat(cat1)
 		debug_cat(cat2)
@@ -140,7 +140,7 @@ function make_cat(n)
 	c.t=0
 	c.state=state_init
 	c.pal_swaps=nil
-	
+
 	if (c.n==1) then
 		-- move cat1 on init
 		c.x+=12
@@ -206,7 +206,7 @@ function move_cat(cat)
 
 	-- cap speed
 	if (abs(cat.dx)<min_dx) cat.dx=0
-	
+
 	if (cat.dx>max_dx) cat.dx=max_dx
 	if (cat.dx<-max_dx) cat.dx=-max_dx
 	if (cat.dy>max_dy) cat.dy=max_dy
@@ -239,7 +239,7 @@ function move_cat(cat)
 		cat.dx=0
 		cat.x=120
 	end
-	
+
 	set_cat_state(cat)
 end
 
@@ -248,7 +248,7 @@ function set_cat_state(cat)
 	local new_state=state_unknown
 
 	if (is_on_floor(cat)) then
-		printh("n: "..cat.n.."is_on_floor")
+		--printh("n: "..cat.n.."is_on_floor")
 		if (cat.dx!=0) then
 			new_state=state_running
 		else
@@ -258,22 +258,22 @@ function set_cat_state(cat)
 			if (idle_time>=sleep_time) new_state=state_sleeping
 		end
 	else
-		printh("n: "..cat.n.."is in air")
+		--printh("n: "..cat.n.."is in air")
 		-- cat is in the air
-		if (cat.dy>0) then 
+		if (cat.dy>0) then
 			new_state=state_falling
 		else
 			new_state=state_jumping
 		end
 	end
-	
-	printh("n: "..cat.n.." dx"..cat.dx.." dy"..cat.dy)
-	printh("old: "..old_state.." new "..new_state)
+
+	--printh("n: "..cat.n.." dx"..cat.dx.." dy"..cat.dy)
+	--printh("old: "..old_state.." new "..new_state)
 
 	if (new_state!=old_state and new_state!=state_unknown) then
 		-- set state
 		cat.state=new_state
-		
+
 		if (not is_idle_state(new_state)) then
 			-- reset idle timer
 			cat.t=0
@@ -289,7 +289,7 @@ function draw_cat(cat)
 	-- maybe flip cat
 	if (cat.dx<0) cat.flip_h=true
 	if (cat.dx>0) cat.flip_h=false
-	
+
 	-- swap palette, draw sprite, unswap palette
 	--swap_pal(cat.pal_swaps)
 	spr(get_sprite(cat),cat.x,cat.y,1,1,cat.flip_h)
@@ -300,6 +300,8 @@ function draw_cats()
 	draw_cat(other_cat)
 	draw_cat(main_cat)
 end
+
+
 -->8
 -- cat swap control
 
@@ -328,7 +330,7 @@ function check_swap()
 	-- check if swap button pressed
 	if (btnp(🅾️,0)) then
 		swap_cats(0,0)
-	end 
+	end
 	if (btnp(❎,0)) then
 		swap_cats(1,0)
 	end
