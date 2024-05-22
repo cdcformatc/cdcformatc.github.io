@@ -22,7 +22,6 @@ function _init()
 	other_cat=cat2
 end
 
-
 function _update()
 	if (not game_over) then
 		check_swap()
@@ -32,7 +31,6 @@ function _update()
 		if (btnp(5,0) or btnp(5,1)) _init()
 	end
 end
-
 
 function _draw()
 	cls(5)
@@ -52,7 +50,91 @@ function _draw()
 		print("press ❎ to play again!",18,72,7)
 	end
 end
+-->8
+-- cat state control
 
+-- cat states
+state_init=1
+state_unknown=2
+state_dead=3
+state_standing=4
+state_jumping=5
+state_falling=6
+state_running=7
+state_sitting=8
+state_loafing=9
+state_sleeping=10
+
+-- timer constants
+local sit_time=0.5*60
+local loaf_time=3*60
+local sleep_time=6*60
+
+function is_idle_state(state)
+	return (state==state_sitting or state==state_loafing or state==state_sleeping)
+end
+
+function is_idle(cat)
+	return is_idle_state(cat.state)
+end
+
+function is_on_floor(cat)
+	return cat.y >= 120
+end
+
+function is_falling(cat)
+	return cat.state==state_falling
+end
+
+function is_jumping(cat)
+	return cat.state==state_jumping
+end
+
+function is_airborne(cat)
+	return is_falling(cat) or is_jumping(cat)
+end
+
+function set_cat_state(cat)
+	local old_state=cat.state
+	local new_state=state_unknown
+
+	if (is_on_floor(cat)) then
+		--printh("n: "..cat.n.."is_on_floor")
+		if (cat.dx!=0) then
+			new_state=state_running
+		else
+			local idle_time = cat.t*cat.lazy_factor
+			new_state=state_standing
+			if (idle_time>=sit_time) new_state=state_sitting
+			if (idle_time>=loaf_time) new_state=state_loafing
+			if (idle_time>=sleep_time) new_state=state_sleeping
+		end
+	else
+		--printh("n: "..cat.n.."is in air")
+		-- cat is in the air
+		if (cat.dy>0) then
+			new_state=state_falling
+		else
+			new_state=state_jumping
+		end
+	end
+
+	--printh("n: "..cat.n.." dx"..cat.dx.." dy"..cat.dy)
+	--printh("old: "..old_state.." new "..new_state)
+
+	if (new_state!=old_state and new_state!=state_unknown) then
+		-- set state
+		cat.state=new_state
+
+		if (not is_idle_state(new_state)) then
+			-- reset idle timer
+			cat.t=0
+		end
+	else
+		-- increment idle timer
+		cat.t+=1
+	end
+end
 
 -->8
 -- cat logic
@@ -73,94 +155,6 @@ max_dx=4
 max_dy=8
 
 min_dx=0.25
-
--- timer constants
-sit_time=0.5*60
-loaf_time=3*60
-sleep_time=6*60
-
--- animation constants
--- speeds: lower is faster
-max_ani_spd=1.5
-min_ani_spd=4
-
--- cat_states
-state_init=1
-state_unknown=2
-state_dead=3
-state_standing=4
-state_jumping=5
-state_falling=6
-state_running=7
-state_sitting=8
-state_loafing=9
-state_sleeping=10
-
-function is_idle_state(state)
-	return (state==state_sitting or state==state_loafing or state==state_sleeping)
-end
-
-local sprite_tbl = {
-	{3},     --state_init
-	{3},     --state_unknown
-	{3},     --state_dead
-	{0},     --state_standing
-	{5},     --state_jumping
-	{6},     --state_falling
-	{5,6}, --state_running
-	{1},     --state_sitting
-	{2},     --state_loafing
-	{4},     --state_sleeping
-}
-
-function do_swap_pal(s)
-	--printh("swap "..s[1].." "..s[2])
-	pal(s[1],s[2])
-end
-
-function reset_pal()
-	pal()
-	-- set black not transparent
-	palt(0, false)
-	-- set beige transparent
-	palt(15, true)
-end
-
-function swap_pal(cat)
-	local swaps=cat.pal_swaps
-	if (swaps) then
-		printh(cat.n.." swaps")
-		if cat.flip_h then
-			foreach(swaps.flip,do_swap_pal)
-		else
-			foreach(swaps.noflip,do_swap_pal)
-		end
-
-	end
-end
-
-function cat_speed(cat)
-	return sqrt(cat.dx^2+cat.dy^2)
-end
-
-function get_sprite(cat)
-	local ani=sprite_tbl[cat.state]
-	local dur=#ani
-	-- calc ani speed based on cat speed
-	spd=max(max_ani_spd,min_ani_spd-cat_speed(cat))
-	-- speed can not go below 1
-	spd=max(1, spd)
-
-	if cat.t%5==0 then
-		--printh(cat.dx.." "..cat.dy.." "..spd)
-	end
-
-	-- find frame of animation
-	local f=(round((cat.t+1+dur)/spd)-1)%dur
-
-	-- find sprite for frame and cat
-	return ani[f+1]+16*cat.n
-end
 
 function make_cat(n)
 	c={}
@@ -216,22 +210,6 @@ function check_btns(cat)
 		d.y+=dy_down
 	end
 	return d
-end
-
-function is_on_floor(cat)
-	return cat.y >= 120
-end
-
-function is_falling(cat)
-	return cat.state==state_falling
-end
-
-function is_jumping(cat)
-	return cat.state==state_jumping
-end
-
-function is_airborne(cat)
-	return is_falling(cat) or is_jumping(cat)
 end
 
 function move_cat(cat)
@@ -294,46 +272,48 @@ function move_cat(cat)
 	set_cat_state(cat)
 end
 
-function set_cat_state(cat)
-	local old_state=cat.state
-	local new_state=state_unknown
+function cat_speed(cat)
+	return sqrt(cat.dx^2+cat.dy^2)
+end
 
-	if (is_on_floor(cat)) then
-		--printh("n: "..cat.n.."is_on_floor")
-		if (cat.dx!=0) then
-			new_state=state_running
-		else
-			local idle_time = cat.t*cat.lazy_factor
-			new_state=state_standing
-			if (idle_time>=sit_time) new_state=state_sitting
-			if (idle_time>=loaf_time) new_state=state_loafing
-			if (idle_time>=sleep_time) new_state=state_sleeping
-		end
-	else
-		--printh("n: "..cat.n.."is in air")
-		-- cat is in the air
-		if (cat.dy>0) then
-			new_state=state_falling
-		else
-			new_state=state_jumping
-		end
+-->8
+-- cat graphics
+
+-- animation constants
+-- speeds: lower is faster
+local max_ani_spd=1.5
+local min_ani_spd=4
+
+local sprite_tbl = {
+	{3},     --state_init
+	{3},     --state_unknown
+	{3},     --state_dead
+	{0},     --state_standing
+	{5},     --state_jumping
+	{6},     --state_falling
+	{5,6}, --state_running
+	{1},     --state_sitting
+	{2},     --state_loafing
+	{4},     --state_sleeping
+}
+
+function get_sprite(cat)
+	local ani=sprite_tbl[cat.state]
+	local dur=#ani
+	-- calc ani speed based on cat speed
+	spd=max(max_ani_spd,min_ani_spd-cat_speed(cat))
+	-- speed can not go below 1
+	spd=max(1, spd)
+
+	if cat.t%5==0 then
+		--printh(cat.dx.." "..cat.dy.." "..spd)
 	end
 
-	--printh("n: "..cat.n.." dx"..cat.dx.." dy"..cat.dy)
-	--printh("old: "..old_state.." new "..new_state)
+	-- find frame of animation
+	local f=(round((cat.t+1+dur)/spd)-1)%dur
 
-	if (new_state!=old_state and new_state!=state_unknown) then
-		-- set state
-		cat.state=new_state
-
-		if (not is_idle_state(new_state)) then
-			-- reset idle timer
-			cat.t=0
-		end
-	else
-		-- increment idle timer
-		cat.t+=1
-	end
+	-- find sprite for frame and cat
+	return ani[f+1]+16*cat.n
 end
 
 function draw_cat(cat)
@@ -353,10 +333,34 @@ function draw_cats()
 	draw_cat(main_cat)
 end
 
+-- palette fun
+function do_swap_pal(s)
+	--printh("swap "..s[1].." "..s[2])
+	pal(s[1],s[2])
+end
+
+function reset_pal()
+	pal()
+	-- set black not transparent
+	palt(0, false)
+	-- set beige transparent
+	palt(15, true)
+end
+
+function swap_pal(cat)
+	local swaps=cat.pal_swaps
+	if (swaps) then
+		printh(cat.n.." swaps")
+		if cat.flip_h then
+			foreach(swaps.flip,do_swap_pal)
+		else
+			foreach(swaps.noflip,do_swap_pal)
+		end
+	end
+end
 
 -->8
 -- cat swap control
-
 function swap_cats(what,player)
 	-- swap cats
 	if (what==0) then
@@ -393,6 +397,7 @@ function check_swap()
 		swap_cats(1,1)
 	end
 end
+
 -->8
 --debug and printing
 char_width=5
@@ -424,6 +429,7 @@ function debug_cat(cat)
 	y+=char_height
 	printn(cat.t,7,x,y)
 end
+
 __gfx__
 f0ff0ff0ffff0ff0fff0fff000fff00ffffffffff0ff0ff00fff0ff0000000000000000000000000000000000000000000000000000000000000000000000000
 00ff0000f0ff0000fff00f000ffff0ffffffffff00ff00000fff0000000000000000000000000000000000000000000000000000000000000000000000000000
