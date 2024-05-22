@@ -71,6 +71,8 @@ ddx_slow=.625
 max_dx=4
 max_dy=8
 
+min_dx=0.25
+
 -- timer constants
 sit_time=0.5*60
 loaf_time=3*60
@@ -120,7 +122,7 @@ function make_cat(n)
 	c.t=0
 	c.state=state_init
 	
-	if (c.n == 1) then
+	if (c.n==1) then
 		-- move cat1 on init
 		c.x+=12
 		c.flip_h=true
@@ -182,7 +184,7 @@ function move_cat(cat)
 	end
 
 	-- cap speed
-	if (abs(cat.dx)<.1) cat.dx=0
+	if (abs(cat.dx)<min_dx) cat.dx=0
 	
 	if (cat.dx>max_dx) cat.dx=max_dx
 	if (cat.dx<-max_dx) cat.dx=-max_dx
