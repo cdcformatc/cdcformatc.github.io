@@ -107,6 +107,24 @@ local sprite_tbl = {
 	4,	--state_sleeping
 }
 
+function do_unswap_pal(s)
+	--printh("unswap "..s[1].." "..s[1])
+	pal(s[1],s[1])
+end
+
+function do_swap_pal(s)
+	--printh("swap "..s[1].." "..s[2])
+	pal(s[1],s[2])
+end
+
+function unswap_pal(swaps)
+	if (swaps) foreach(swaps,do_unswap_pal)
+end
+
+function swap_pal(swaps)
+	if (swaps) foreach(swaps,do_swap_pal)
+end
+
 function get_sprite(cat)
 	return sprite_tbl[cat.state]+(cat.n*16)
 end
@@ -121,6 +139,7 @@ function make_cat(n)
 	c.dx=0
 	c.t=0
 	c.state=state_init
+	c.pal_swaps=nil
 	
 	if (c.n==1) then
 		-- move cat1 on init
@@ -128,6 +147,8 @@ function make_cat(n)
 		c.flip_h=true
 		c.lazy_factor=1
 	else
+		-- this cat has pallet swaps
+		c.pal_swaps={{4,0},{7,0},{9,0}}
 		c.lazy_factor=1.25
 	end
 	return c
@@ -264,10 +285,15 @@ function set_cat_state(cat)
 end
 
 function draw_cat(cat)
+	--printh("draw "..cat.n)
+	-- maybe flip cat
 	if (cat.dx<0) cat.flip_h=true
 	if (cat.dx>0) cat.flip_h=false
 	
+	-- swap palette, draw sprite, unswap palette
+	swap_pal(cat.pal_swaps)
 	spr(get_sprite(cat),cat.x,cat.y,1,1,cat.flip_h)
+	unswap_pal(cat.pal_swaps)
 end
 
 function draw_cats()
