@@ -50,6 +50,7 @@ function _draw()
 		print("press ❎ to play again!",18,72,7)
 	end
 end
+
 -->8
 -- cat state control
 
@@ -143,8 +144,8 @@ end
 dy_gravity=0.4
 
 dy_jump=-15*dy_gravity
-dy_float=-2*dy_gravity
-dy_down=1*dy_gravity
+dy_float=-.5*dy_gravity
+dy_down=.75*dy_gravity
 
 dx_move=2
 ddx_air=0.888
@@ -183,45 +184,41 @@ function make_cat(n)
 	return c
 end
 
-function check_btns(cat)
+function get_btns(cat)
+	local b={}
 	local p=cat.p
-	local d={}
-	d.x=0
-	d.y=0
-
-	if (btn(⬅️,p)) then
-		d.x-=dx_move
-	end
-	if (btn(➡️,p)) then
-		d.x+=dx_move
-	end
-	--printh(cat.dy)
-	if (btnp(⬆️,p)) then
-		if (is_on_floor(cat)) then
-			sfx(0)
-			d.y+=dy_jump
-			--printh("jump")
-		elseif (is_falling(cat)) then
-			d.y+=dy_float
-			--printh("float")
-		end
-	end
-	if (btnp(⬇️,p)) then
-		d.y+=dy_down
-	end
-	return d
+	b.⬅️ = btn(⬅️,p)
+	b.➡️ = btn(➡️,p)
+	b.⬆️ = btn(⬆️,p)
+	b.⬇️ = btn(⬇️,p)
+	return b
 end
 
 function move_cat(cat)
 	-- check user input
-	local d=check_btns(cat)
+	local b=get_btns(cat)
+
+	-- apply user input
+	if (b.⬅️) cat.dx-=dx_move
+	if (b.➡️) cat.dx+=dx_move
+	if (b.⬆️) then
+		if (is_on_floor(cat)) then
+				-- jump
+				sfx(0)
+				cat.dy+=dy_jump
+				printh("jump")
+			elseif (is_falling(cat)) then
+				-- float
+				cat.dy+=dy_float
+				printh("float")
+			end
+	end
+	if (b.⬇️) then
+		cat.dy+=dy_down
+	end
 
 	-- do gravity
 	cat.dy+=dy_gravity
-
-	-- apply user input
-	cat.dy+=d.y
-	cat.dx+=d.x
 
 	-- apply x friction
 	if (is_on_floor(cat)) then
@@ -269,6 +266,7 @@ function move_cat(cat)
 		cat.x=120
 	end
 
+	-- update cat state
 	set_cat_state(cat)
 end
 
