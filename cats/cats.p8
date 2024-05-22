@@ -5,7 +5,7 @@ __lua__
 local version="0.2.1"
 
 function _init()
-	debug=true
+	debug=false
 
 	-- set beige transparent
 	palt(15, true)
