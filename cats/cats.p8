@@ -209,6 +209,10 @@ function is_on_floor(cat)
 	return cat.y >= 120
 end
 
+function is_falling(cat)
+	return cat.state==state_falling
+end
+
 function move_cat(cat)
 	-- check user input
 	local d=check_btns(cat)
