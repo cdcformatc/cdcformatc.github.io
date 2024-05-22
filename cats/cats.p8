@@ -197,12 +197,6 @@ function check_btns(cat)
 	if (btnp(⬇️,p)) then
 		d.y+=dy_down
 	end
-	if d.x>10 then
-		d.x=10
-	end
-	if d.x<-10 then
-		d.x=-10
-	end
 	return d
 end
 
