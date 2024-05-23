@@ -9,6 +9,7 @@ function _init()
 	printh("init")
 
 	-- set game state
+	g_timer=0
 	game_over=false
 
 	-- make cats
@@ -20,6 +21,8 @@ function _init()
 end
 
 function _update()
+	g_timer+=1
+
 	if (not game_over) then
 		check_swap()
 		move_cat(main_cat)
