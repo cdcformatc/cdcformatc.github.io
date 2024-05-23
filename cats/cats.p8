@@ -15,15 +15,18 @@ function _init()
 
 	-- make cats
 	cats = {[1]=make_cat(1),[2]=make_cat(2)}
-
 	main_cat=cats[1]
 	other_cat=cats[2]
+
+	-- make effects
+	init_effects()
 end
 
 function _update()
 	g_timer+=1
 
 	if (not game_over) then
+		update_effects()
 		check_swap()
 
 		do_action(main_cat)
@@ -47,6 +50,7 @@ function _draw()
 	print(vstr,128-(#vstr-1)*char_width,0,12)
 
 	draw_cats()
+	draw_effects()
 
 	if debug then
 		debug_cat(cat1)
@@ -436,6 +440,58 @@ function swap_pal(cat, t_col)
 	if (t_col!=0) then
 		palt(t_col)
 	end
+end
+
+-->8
+-- effects
+local animations = {
+	[1]={33,34,35,36,37,38} -- [1]=sparkle
+}
+
+e_sparkle=1
+
+function init_effects()
+	effects={}
+end
+
+function update_effects()
+	foreach(effects,update_effect)
+end
+
+function draw_effects()
+	foreach(effects, draw_effect)
+end
+
+function new_effect(e,x,y,s)
+	e={e=e,x=x,y=y,s=s,f=0,sf=-1}
+	return e
+end
+
+function sparkle(x,y)
+	-- sparkle_speed = 2
+	e=new_effect(e_sparkle,x,y,2)
+	add(effects, e)
+end
+
+function update_effect(e)
+	-- increment subframe
+	e.sf+=1
+	if (e.sf>=e.s) then
+		e.f+=1
+		e.sf=0
+	end
+	-- remove completed effect from table
+	if (e.f+1 > #animations[e.e]) then
+		del(effects,e)
+	end
+	--printh("f "..e.f.."."..e.sf.." "..#animations[e.e])
+end
+
+function draw_effect(e)
+	--if (e.f+1 > #animations[e.e]) return false
+	-- get the animation and then the frame of the animation
+	local frame = animations[e.e][e.f+1]
+	spr(frame, e.x, e.y)
 end
 
 -->8
