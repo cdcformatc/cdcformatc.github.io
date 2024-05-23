@@ -8,9 +8,6 @@ function _init()
 	debug=false
 	printh("init")
 
-	-- set palette
-	reset_pal()
-
 	-- set game state
 	game_over=false
 
@@ -35,6 +32,10 @@ end
 function _draw()
 	cls(5)
 
+	-- reset palette
+	reset_pal()
+
+ -- print version
 	local vstr="v"..version
 	print(vstr,128-(#vstr-1)*char_width,0,12)
 
@@ -50,7 +51,6 @@ function _draw()
 		print("press ❎ to play again!",18,72,7)
 	end
 end
-
 -->8
 -- cat state control
 
@@ -226,7 +226,7 @@ function move_cat(cat)
 	else
 		cat.dx*=ddx_air
 	end
-	
+
 	--apply y friction
 	cat.dy*=.99
 
@@ -320,10 +320,17 @@ function draw_cat(cat)
 	if (cat.dx<0) cat.flip_h=true
 	if (cat.dx>0) cat.flip_h=false
 
-	-- swap palette, draw sprite, unswap palette
-	swap_pal(cat)
+	-- get sprite
 	local s=get_sprite(cat)
+	local f=fget(s)
+
+	-- swap palette
+	swap_pal(cat, f)
+
+	-- draw sprite
 	spr(s,cat.x,cat.y,1,1,cat.flip_h)
+
+	-- reset palette
 	reset_pal()
 end
 
@@ -332,24 +339,25 @@ function draw_cats()
 	draw_cat(main_cat)
 end
 
--- palette fun
+-->8
+-- fun with pals (palettes)
 function reset_pal()
 	pal()
-	-- set black not transparent
-	palt(0, false)
-	-- set beige transparent
-	palt(15, true)
+	palt()
 end
 
-function swap_pal(cat)
-	local swaps=cat.pal_swaps
+function swap_pal(cat, t_col)
+	local swaps = cat.pal_swaps
 	if (swaps) then
 		--printh(cat.n.." swaps")
-		if cat.flip_h then
-			pal(swaps.flip)
-		else
-			pal(swaps.noflip)
-		end
+		local s=swaps.noflip
+		if (cat.flip_h) s=swaps.flip
+		pal(s)
+ end
+	-- set transparency
+	--printh(t_col)
+	if (t_col!=0) then
+		palt(t_col)
 	end
 end
 
