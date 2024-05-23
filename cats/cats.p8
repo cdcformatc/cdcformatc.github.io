@@ -25,6 +25,10 @@ function _update()
 
 	if (not game_over) then
 		check_swap()
+
+		do_action(main_cat)
+		do_action(other_cat)
+
 		move_cat(main_cat)
 		move_cat(other_cat)
 	else
@@ -177,6 +181,7 @@ function make_cat(n)
 	c.dy=0
 	c.dx=0
 	c.t=0
+	c.last_act=-1
 	c.state=state_init
 	c.pal_swaps=nil
 
@@ -288,6 +293,21 @@ end
 
 function cat_speed(cat)
 	return sqrt(cat.dx^2+cat.dy^2)
+end
+
+-->8
+-- cat actions
+act_deb=10
+
+function do_action(cat)
+	local p = cat.p
+	if (btn(b_act,p)) then
+		if (cat.last_act+act_deb>=g_timer) return false
+		--else
+		cat.last_act=g_timer
+		printh(cat.n.." action")
+	end
+	return true
 end
 
 -->8
