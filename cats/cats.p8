@@ -58,6 +58,38 @@ function _draw()
 		print("press ❎ to play again!",18,72,7)
 	end
 end
+
+--debug and printing
+char_width=5
+char_height=6
+
+function round(x)
+	return flr(x+.5)
+end
+
+function printn(s,n,x,y)
+	print(sub(s,0,n),x,y)
+end
+
+function debug_cat(cat)
+	x=cat.n*7*char_width
+	y=0
+
+	print(cat.n,x,y)
+	y+=char_height
+	print(cat.state,x,y)
+	y+=char_height
+	printn(cat.x,7,x,y)
+	y+=char_height
+	printn(cat.y,7,x,y)
+	y+=char_height
+	printn(cat.dx,7,x,y)
+	y+=char_height
+	printn(cat.dy,7,x,y)
+	y+=char_height
+	printn(cat.t,7,x,y)
+end
+
 -->8
 -- cat state control
 
@@ -385,7 +417,6 @@ function draw_cats()
 	draw_cat(main_cat)
 end
 
--->8
 -- fun with pals (palettes)
 function reset_pal()
 	pal()
@@ -439,38 +470,6 @@ function check_swap()
 	-- check if swap button pressed
 	if (btn(b_swp,0)) swap_cats(0)
 	if (btn(b_swp,1)) swap_cats(1)
-end
-
--->8
---debug and printing
-char_width=5
-char_height=6
-
-function round(x)
-	return flr(x+.5)
-end
-
-function printn(s,n,x,y)
-	print(sub(s,0,n),x,y)
-end
-
-function debug_cat(cat)
-	x=cat.n*7*char_width
-	y=0
-
-	print(cat.n,x,y)
-	y+=char_height
-	print(cat.state,x,y)
-	y+=char_height
-	printn(cat.x,7,x,y)
-	y+=char_height
-	printn(cat.y,7,x,y)
-	y+=char_height
-	printn(cat.dx,7,x,y)
-	y+=char_height
-	printn(cat.dy,7,x,y)
-	y+=char_height
-	printn(cat.t,7,x,y)
 end
 
 __gfx__
