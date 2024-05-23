@@ -102,6 +102,44 @@ function is_airborne(cat)
 	return is_falling(cat) or is_jumping(cat)
 end
 
+function make_cat(n)
+	c={}
+	c.n=n-1
+	c.p=c.n
+
+	-- position and speed
+	c.x=24
+	c.y=60
+	c.dy=0
+	c.dx=0
+
+	-- attributes
+	c.sprite_base=0
+	c.lazy_factor=1
+	c.pal_swaps=nil
+
+	-- state
+	c.t=0
+	c.last_act=-1
+	c.state=state_init
+
+	-- set unique attributes
+	if (c.n==1) then
+		c.sprite_base=16
+		-- move cat1 on init
+		c.x+=12
+		c.flip_h=true
+
+		-- set palette swaps
+		c.pal_swaps={}
+		c.pal_swaps.flip = {[13]=9,[14]=4}
+		c.pal_swaps.noflip = {[14]=9,[13]=4}
+	else
+		c.lazy_factor=1.25
+	end
+	return c
+end
+
 function set_cat_state(cat)
 	local old_state=cat.state
 	local new_state=state_unknown
@@ -171,34 +209,6 @@ max_dx=4
 max_dy=8
 
 min_dx=0.25
-
-function make_cat(n)
-	c={}
-	c.n=n-1
-	c.p=c.n
-	c.x=24
-	c.y=60
-	c.dy=0
-	c.dx=0
-	c.t=0
-	c.last_act=-1
-	c.state=state_init
-	c.pal_swaps=nil
-
-	if (c.n==1) then
-		-- move cat1 on init
-		c.x+=12
-		c.flip_h=true
-		c.lazy_factor=1
-		c.pal_swaps={}
-		c.pal_swaps.flip = {[13]=9,[14]=4}
-		c.pal_swaps.noflip = {[14]=9,[13]=4}
-	else
-		--c.pal_swaps={{4,0},{7,0},{9,0}}
-		c.lazy_factor=1.25
-	end
-	return c
-end
 
 function move_cat(cat)
 	local p=cat.p
@@ -347,7 +357,7 @@ function get_sprite(cat)
 	local f=(round((cat.t+1+dur)/spd)-1)%dur
 
 	-- find sprite for frame and cat
-	return ani[f+1]+16*cat.n
+	return ani[f+1]+cat.sprite_base
 end
 
 function draw_cat(cat)
