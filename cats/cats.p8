@@ -10,6 +10,7 @@ function _init()
 
 	-- set game state
 	g_timer=0
+	last_swp=-1
 	game_over=false
 
 	-- make cats
@@ -141,7 +142,15 @@ function set_cat_state(cat)
 end
 
 -->8
--- cat logic
+-- cat movement
+
+-- controls
+b_left=0
+b_right=1
+b_up=2
+b_down=3
+b_swp=4
+b_act=5
 
 -- movement constants
 dy_gravity=0.4
@@ -187,24 +196,22 @@ function make_cat(n)
 	return c
 end
 
-function get_btns(cat)
-	local b={}
-	local p=cat.p
-	b.⬅️ = btn(⬅️,p)
-	b.➡️ = btn(➡️,p)
-	b.⬆️ = btn(⬆️,p)
-	b.⬇️ = btn(⬇️,p)
-	return b
-end
-
 function move_cat(cat)
-	-- check user input
-	local b=get_btns(cat)
+	local p=cat.p
 
 	-- apply user input
-	if (b.⬅️) cat.dx-=dx_move
-	if (b.➡️) cat.dx+=dx_move
-	if (b.⬆️) then
+	-- left
+	if (btn(b_left,p)) then
+		cat.dx-=dx_move
+	end
+
+	-- right
+	if (btn(b_right,p)) then
+		cat.dx+=dx_move
+	end
+
+	-- up
+	if (btn(b_up,p)) then
 		if (is_on_floor(cat)) then
 				-- jump
 				sfx(0)
@@ -216,7 +223,14 @@ function move_cat(cat)
 				printh("float")
 			end
 	end
-	if (b.⬇️) then
+
+	--down
+	--if (btnp(b_down,p)) then
+		--if (is_jumping(cat)) then
+			--cat.dy=-dy_gravity
+		--end
+	--end
+	if (btn(b_down,p)) then
 		cat.dy+=dy_down
 	end
 
@@ -366,32 +380,36 @@ end
 
 -->8
 -- cat swap control
+local swp_deb=5
+
 function swap_cats(p)
+	-- debounce cat swap
+	if (last_swp+swp_deb>=g_timer) return false
+	last_swp=g_timer
+
 	-- swap cats
 	local t_cat=main_cat
-
 	main_cat=other_cat
 	other_cat=t_cat
 
 	-- play cat sfx
 	if (p==0) then
-	 sfx(2+main_cat.n)
+		sfx(2+main_cat.n)
 	else
-	 sfx(2+other_cat.n)
+		sfx(2+other_cat.n)
 	end
 
+	-- set cat state
 	main_cat.p=0
 	other_cat.p=1
+
+	return true
 end
 
 function check_swap()
 	-- check if swap button pressed
-	if (btnp(🅾️,0)) then
-		swap_cats(0)
-	end
-	if (btnp(🅾️,1)) then
-		swap_cats(1)
-	end
+	if (btn(b_swp,0)) swap_cats(0)
+	if (btn(b_swp,1)) swap_cats(1)
 end
 
 -->8
