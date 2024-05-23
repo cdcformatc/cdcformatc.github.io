@@ -14,11 +14,10 @@ function _init()
 	game_over=false
 
 	-- make cats
-	cat1=make_cat(1)
-	cat2=make_cat(2)
+	cats = {[1]=make_cat(1),[2]=make_cat(2)}
 
-	main_cat=cat1
-	other_cat=cat2
+	main_cat=cats[1]
+	other_cat=cats[2]
 end
 
 function _update()
