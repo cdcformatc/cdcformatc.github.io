@@ -343,7 +343,7 @@ end
 
 -->8
 -- cat actions
-act_deb=10
+act_deb=1
 
 function do_action(cat)
 	local p = cat.p
@@ -351,6 +351,7 @@ function do_action(cat)
 		if (cat.last_act+act_deb>=g_timer) return false
 		--else
 		cat.last_act=g_timer
+		sparkle(cat.x,cat.y)
 		printh(cat.n.." action")
 	end
 	return true
