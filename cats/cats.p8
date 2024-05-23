@@ -363,18 +363,15 @@ end
 
 -->8
 -- cat swap control
-function swap_cats(what,player)
+function swap_cats(p)
 	-- swap cats
-	if (what==0) then
-		main_cat=cat1
-		other_cat=cat2
-	else
-		main_cat=cat2
-		other_cat=cat1
-	end
+	local t_cat=main_cat
+
+	main_cat=other_cat
+	other_cat=t_cat
 
 	-- play cat sfx
-	if (player==0) then
+	if (p==0) then
 	 sfx(2+main_cat.n)
 	else
 	 sfx(2+other_cat.n)
@@ -387,16 +384,10 @@ end
 function check_swap()
 	-- check if swap button pressed
 	if (btnp(🅾️,0)) then
-		swap_cats(0,0)
-	end
-	if (btnp(❎,0)) then
-		swap_cats(1,0)
+		swap_cats(0)
 	end
 	if (btnp(🅾️,1)) then
-		swap_cats(0,1)
-	end
-	if (btnp(❎,1)) then
-		swap_cats(1,1)
+		swap_cats(1)
 	end
 end
 
