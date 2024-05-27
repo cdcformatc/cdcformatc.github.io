@@ -41,14 +41,16 @@ end
 
 function _draw()
 	cls(5)
+	camera()
 
 	-- reset palette
 	reset_pal()
 
- -- print version
+	-- print version
 	local vstr="v"..version
 	print(vstr,128-(#vstr-1)*char_width,0,12)
 
+	set_camera()
 	draw_cats()
 	draw_effects()
 
@@ -529,6 +531,17 @@ function check_swap()
 	if (btn(b_swp,1)) swap_cats(1)
 end
 
+-->8
+--map?
+
+function set_camera()
+	local cx=(cats[1].x+cats[2].x)/2
+	local cy=(cats[1].y+cats[2].y)/2
+	camera(
+		flr(cx - 64),
+		flr(cy - 64)
+	)
+end
 __gfx__
 f0ff0ff0ffff0ff0fff0fff000fff00ffffffffff0ff0ff00fff0ff0000000000000000000000000000000000000000000000000000000000000000000000000
 00ff0000f0ff0000fff00f000ffff0ffffffffff00ff00000fff0000000000000000000000000000000000000000000000000000000000000000000000000000
