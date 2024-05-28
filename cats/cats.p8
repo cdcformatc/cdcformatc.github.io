@@ -533,8 +533,12 @@ end
 
 function check_swap()
 	-- check if swap button pressed
-	if (btn(b_swp,0)) swap_cats(0)
-	if (btn(b_swp,1)) swap_cats(1)
+	local s0=btn(b_swp,0)
+	local s1=btn(b_swp,1)
+	if (s0) swap_cats(0)
+	if (s1) swap_cats(1)
+	-- if neither swap button pressed then reset swap timer
+	if (not s0 and not s1) last_swp=-1
 end
 
 -->8
