@@ -505,7 +505,7 @@ end
 
 -->8
 -- cat swap control
-local swp_deb=5
+local swp_deb=15
 
 function swap_cats(p)
 	-- debounce cat swap
