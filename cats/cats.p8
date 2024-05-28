@@ -250,19 +250,44 @@ ddx_air=0.950
 ddx_slow=.625
 
 max_dx=4
-max_dy=8
+max_dy=7
 
 min_dx=0.25
 
 function move_actor_x(a)
 	-- do x movement
+	if (a.dx==0) return -- not moving
+	-- find candidate x position
+	local x
 	local moving_right=(a.dx>0)
-	-- candidate x position
-	x1 = a.x + a.dx
-	if (solid(x1, a.y+a.hh)) then
-		-- hit wall
+	if (moving_right) then
+		-- right
+		x=a.x+a.fw+a.dx
+	else
+		-- left
+		x=a.x+a.dx
+	end
+	-- check collision
+	if (solid(x,a.y+a.hh)) then
 		--printh("hit wall")
+		-- stop x movement
 		a.dx=0
+		if (moving_right) then
+			-- find point left of wall and put cat there
+			x=flr(x)
+			while solid(x,a.y+a.hh) do
+				x-=1
+			end
+			a.x=x-a.fw
+		else
+			-- left
+			-- find point right of wall and put cat there
+			x=ceil(x)
+			while solid(x,a.y+a.hh) do
+				x+=1
+			end
+			a.x=x
+		end
 	else
 		-- nothing in the way
 		a.x+=a.dx
@@ -290,14 +315,14 @@ function move_actor_y(a)
 		if (moving_down) then
 			--printh("hit floor")
 			-- find point above ground and put cat there
-			y=ceil(y)
+			y=flr(y)
 			while solid(a.x+a.hw,y) do
 				y-=1
 			end
 			a.y=y-a.fh
 		else
 			--moving up
-			printh("hit ceiling")
+			--printh("hit ceiling")
 			y=ceil(y)
 			while solid(a.x+a.hw,y) do
 				printh(y)
