@@ -48,7 +48,7 @@ function _draw()
 
 	-- print version
 	local vstr="v"..version
-	print(vstr,128-(#vstr-1)*char_width,0,12)
+	print(vstr,128-(#vstr-1)*char_width,1,0)
 
 	set_camera()
 	draw_map()
