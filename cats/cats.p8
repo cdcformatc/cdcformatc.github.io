@@ -542,7 +542,6 @@ end
 
 -->8
 --map?
-
 function set_camera()
 	local cx=(cats[1].x+cats[2].x)/2
 	local cy=(cats[1].y+cats[2].y)/2
@@ -554,6 +553,14 @@ end
 
 function draw_map()
 	map()
+end
+
+-- test if a point is solid
+function solid(x, y, ignore)
+	local m = mget(x/8, y/8)
+	local s = (m!=0 and fget(m,0))
+	--printh("solid? "..x.." "..y.." "..tostring(s))
+	return s
 end
 
 __gfx__
