@@ -254,10 +254,74 @@ max_dy=8
 
 min_dx=0.25
 
+function move_actor_x(a)
+	-- do x movement
+	local moving_right=(a.dx>0)
+	-- candidate x position
+	x1 = a.x + a.dx
+	if (solid(x1, a.y+a.hh)) then
+		-- hit wall
+		--printh("hit wall")
+		a.dx=0
+	else
+		-- nothing in the way
+		a.x+=a.dx
+	end
+end
+
+function move_actor_y(a)
+	-- do y movement
+	if (a.dy==0) return -- not moving
+	-- find candidate y position
+	local y
+	local moving_down=(a.dy>0)
+	if (moving_down) then
+		-- bottom
+		y = a.y + a.dy + a.fh
+	else
+		-- top
+		y = a.y + a.dy
+	end
+
+	-- check collision
+	if (solid(a.x+a.hw,y,not moving_down)) then
+		-- stop y movement
+		a.dy=0
+		if (moving_down) then
+			--printh("hit floor")
+			-- find point above ground and put cat there
+			y=ceil(y)
+			while solid(a.x+a.hw,y) do
+				y-=1
+			end
+			a.y=y-a.fh
+		else
+			--moving up
+			printh("hit ceiling")
+			y=ceil(y)
+			while solid(a.x+a.hw,y) do
+				printh(y)
+				y += 1
+			end
+			a.y=y
+		end
+	else
+		-- nothing in the way move as normal
+		a.y=a.y+a.dy
+	end
+end
+
+function move_actor(a)
+	move_actor_x(a)
+	move_actor_y(a)
+end
+
 function move_cat(cat)
-	local p=cat.p
+	-- apply movement from last frame
+	move_actor(cat)
 
 	-- apply user input
+	local p=cat.p
 	-- left
 	if (btn(b_left,p)) then
 		cat.dx-=dx_move
@@ -279,7 +343,6 @@ function move_cat(cat)
 			printh("float")
 		end
 	end
-
 	--down
 	--if (btnp(b_down,p)) then
 		--if (is_jumping(cat)) then
@@ -308,34 +371,6 @@ function move_cat(cat)
 	if (cat.dx<-max_dx) cat.dx=-max_dx
 	if (cat.dy>max_dy) cat.dy=max_dy
 	if (cat.dy<-max_dy) cat.dy=-max_dy
-
-	-- finally apply speed
-	cat.y+=cat.dy
-	cat.x+=cat.dx
-
-	-- cat is on the ceiling
-	if (cat.y <= 0) then
-		cat.y=0
-		cat.dy=0
-	end
-
-	-- set cat on the floor
-	if (is_on_floor(cat)) then
-		cat.dy=0
-		cat.y=120
-	end
-
-	-- left bound
-	if (cat.x < 0) then
-		cat.dx=0
-		cat.x=0
-	end
-
-	-- right bound
-	if (cat.x > 120) then
-		cat.dx=0
-		cat.x=120
-	end
 
 	-- update cat state
 	set_cat_state(cat)
