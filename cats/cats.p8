@@ -491,6 +491,9 @@ function draw_cat(cat)
 	-- draw sprite
 	spr(s,cat.x,cat.y,1,1,cat.flip_h)
 
+	-- dot for debug
+	--pset(cat.x, cat.y, 8)
+
 	-- reset palette
 	reset_pal()
 end
