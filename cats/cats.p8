@@ -243,16 +243,20 @@ dy_gravity=0.4
 dy_jump=-15*dy_gravity
 dy_float=-.5*dy_gravity
 dy_down=.75*dy_gravity
+ddy_slow=0.98
 
 dx_move=2
 ddx_air=0.888
-ddx_air=0.950
-ddx_slow=.625
+ddx_slow=.725
 
 max_dx=4
 max_dy=7
 
 min_dx=0.25
+
+-- stats
+--g_max_dy=-1
+--g_max_dx=-1
 
 function move_actor_x(a)
 	-- do x movement
@@ -388,7 +392,7 @@ function move_cat(cat)
 	end
 
 	--apply y friction
-	cat.dy*=.99
+	cat.dy*=ddy_slow
 
 	-- cap speed
 	if (abs(cat.dx)<min_dx) cat.dx=0
@@ -396,6 +400,12 @@ function move_cat(cat)
 	if (cat.dx<-max_dx) cat.dx=-max_dx
 	if (cat.dy>max_dy) cat.dy=max_dy
 	if (cat.dy<-max_dy) cat.dy=-max_dy
+
+	-- do stats
+	--g_max_dx=max(g_max_dx, cat.dx)
+	--g_max_dy=max(g_max_dy, cat.dy)
+	--printh("max "..g_max_dx.." "..g_max_dy)
+	--printh("cur "..cat.dx.." "..cat.dy)
 
 	-- update cat state
 	set_cat_state(cat)
