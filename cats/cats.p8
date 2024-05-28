@@ -126,7 +126,7 @@ function is_idle(cat)
 end
 
 function is_on_floor(cat)
-	return cat.y >= 120
+	return solid(cat.x+cat.hw, cat.y+cat.fh+1, false)
 end
 
 function is_falling(cat)
