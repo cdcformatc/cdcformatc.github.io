@@ -51,6 +51,7 @@ function _draw()
 	print(vstr,128-(#vstr-1)*char_width,0,12)
 
 	set_camera()
+	draw_map()
 	draw_cats()
 	draw_effects()
 
@@ -542,6 +543,11 @@ function set_camera()
 		flr(cy - 64)
 	)
 end
+
+function draw_map()
+	map()
+end
+
 __gfx__
 f0ff0ff0ffff0ff0fff0fff000fff00ffffffffff0ff0ff00fff0ff0000000000000000000000000000000000000000000000000000000000000000000000000
 00ff0000f0ff0000fff00f000ffff0ffffffffff00ff00000fff0000000000000000000000000000000000000000000000000000000000000000000000000000
