@@ -292,14 +292,13 @@ function move_cat(cat)
 		cat.dy+=dy_down
 	end
 
-	-- do gravity
-	cat.dy+=dy_gravity
-
 	-- apply x friction
 	if (is_on_floor(cat)) then
 		cat.dx*=ddx_slow
 	else
 		cat.dx*=ddx_air
+		-- do gravity
+		cat.dy+=dy_gravity
 	end
 
 	--apply y friction
