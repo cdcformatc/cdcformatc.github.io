@@ -262,24 +262,22 @@ function move_cat(cat)
 	if (btn(b_left,p)) then
 		cat.dx-=dx_move
 	end
-
 	-- right
 	if (btn(b_right,p)) then
 		cat.dx+=dx_move
 	end
-
 	-- up
 	if (btn(b_up,p)) then
 		if (is_on_floor(cat)) then
-				-- jump
-				sfx(0)
-				cat.dy+=dy_jump
-				printh("jump")
-			elseif (is_falling(cat)) then
-				-- float
-				cat.dy+=dy_float
-				printh("float")
-			end
+			-- jump
+			sfx(0)
+			cat.dy+=dy_jump
+			printh("jump")
+		elseif (is_falling(cat)) then
+			-- float
+			cat.dy+=dy_float
+			printh("float")
+		end
 	end
 
 	--down
@@ -306,7 +304,6 @@ function move_cat(cat)
 
 	-- cap speed
 	if (abs(cat.dx)<min_dx) cat.dx=0
-
 	if (cat.dx>max_dx) cat.dx=max_dx
 	if (cat.dx<-max_dx) cat.dx=-max_dx
 	if (cat.dy>max_dy) cat.dy=max_dy
