@@ -245,6 +245,7 @@ dy_float=-.5*dy_gravity
 dy_down=.75*dy_gravity
 ddy_slow=0.98
 
+dx_air=1
 dx_move=2
 ddx_air=0.888
 ddx_slow=.725
@@ -349,18 +350,21 @@ function move_cat(cat)
 	-- apply movement from last frame
 	move_actor(cat)
 
+	-- determine x speed
+	local dx=dx_move
+	if (is_airborne(cat)) dx=dx_air
+
 	-- apply user input
-	local p=cat.p
 	-- left
-	if (btn(b_left,p)) then
-		cat.dx-=dx_move
+	if (btn(b_left,cat.p)) then
+		cat.dx-=dx
 	end
 	-- right
-	if (btn(b_right,p)) then
-		cat.dx+=dx_move
+	if (btn(b_right,cat.p)) then
+		cat.dx+=dx
 	end
 	-- up
-	if (btn(b_up,p)) then
+	if (btn(b_up,cat.p)) then
 		if (is_on_floor(cat)) then
 			-- jump
 			sfx(0)
@@ -373,12 +377,12 @@ function move_cat(cat)
 		end
 	end
 	--down
-	--if (btnp(b_down,p)) then
+	--if (btnp(b_down,cat.p)) then
 		--if (is_jumping(cat)) then
 			--cat.dy=-dy_gravity
 		--end
 	--end
-	if (btn(b_down,p)) then
+	if (btn(b_down,cat.p)) then
 		cat.dy+=dy_down
 	end
 
