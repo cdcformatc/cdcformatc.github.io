@@ -156,6 +156,10 @@ function make_cat(n)
 	c.sprite_base=0
 	c.lazy_factor=1
 	c.pal_swaps=nil
+	c.fh=7
+	c.hh=3.5
+	c.fw=7
+	c.hw=3.5
 
 	-- state
 	c.t=0
@@ -210,6 +214,7 @@ function set_cat_state(cat)
 	if (new_state!=old_state and new_state!=state_unknown) then
 		-- set state
 		cat.state=new_state
+		printh(cat.n.." state "..old_state.." to "..new_state)
 
 		if (not is_idle_state(new_state)) then
 			-- reset idle timer
