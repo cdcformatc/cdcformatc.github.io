@@ -544,7 +544,7 @@ end
 -->8
 -- effects
 local animations = {
-	[1]={{48,49,50},{3,2,0}},           -- [1]=indicator
+	[1]={{48,49,50},{3,2,5}},           -- [1]=indicator
 	[2]={{33,34,35,36,37,38},{0,2,0}}   -- [2]=sparkle
 }
 
@@ -565,7 +565,7 @@ end
 
 function new_effect(e,x,y,m)
 	local meta=m or animations[e][2]
-	ef={e=e,x=x,y=y,s=meta[2],f=0,sf=0,rf=meta[1]}
+	ef={e=e,x=x,y=y,m=meta,f=0,sf=0}
 	add(effects, ef)
 	return ef
 end
@@ -578,8 +578,16 @@ end
 function update_effect(e)
 	-- increment subframe
 	e.sf+=1
+	local t=e.m[2]
+	-- repeat frame 0
+	if (e.f==0) then
+		t=(e.m[1]*e.m[2]-1)
+	end
+	-- repeat last frame
+	if (e.f==#(animations[e.e][1])-1) then
+		t=(e.m[3]*e.m[2])
+	end
 	-- check subframe against frame total
-	local t=(e.f==0) and (e.rf*e.s-1) or e.s
 	if (e.sf>=t) then
 		e.f+=1
 		e.sf=0
@@ -621,6 +629,8 @@ function swap_cats(p)
 	-- set cat state
 	main_cat.p=0
 	other_cat.p=1
+
+	new_effect(e_indicator,main_cat.x,main_cat.y-12)
 
 	return true
 end
