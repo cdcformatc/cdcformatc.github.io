@@ -544,7 +544,7 @@ end
 -->8
 -- effects
 local animations = {
-	[1]={{48,49,50},{3,2,5}},           -- [1]=indicator
+	[1]={{48,49,50},{5,2,1}},           -- [1]=indicator
 	[2]={{33,34,35,36,37,38},{0,2,0}}   -- [2]=sparkle
 }
 
@@ -630,6 +630,7 @@ function swap_cats(p)
 	main_cat.p=0
 	other_cat.p=1
 
+	-- spawn indicator effect
 	new_effect(e_indicator,main_cat.x,main_cat.y-12)
 
 	return true
