@@ -565,7 +565,9 @@ end
 
 function new_effect(e,x,y,m)
 	local meta=m or animations[e][2]
-	ef={e=e,x=x,y=y,m=meta,f=0,sf=0}
+	-- calculate first frame duration
+	local sf = meta[2]*meta[1]
+	ef={e=e,x=x,y=y,m=meta,f=0,sf=sf}
 	add(effects, ef)
 	return ef
 end
@@ -576,21 +578,15 @@ function sparkle(x,y)
 end
 
 function update_effect(e)
-	-- increment subframe
-	e.sf+=1
-	local t=e.m[2]
-	-- repeat frame 0
-	if (e.f==0) then
-		t=(e.m[1]*e.m[2]-1)
-	end
-	-- repeat last frame
-	if (e.f==#(animations[e.e][1])-1) then
-		t=(e.m[3]*e.m[2])
-	end
-	-- check subframe against frame total
-	if (e.sf>=t) then
+	-- dec subframe
+	e.sf-=1
+	if (e.sf<=0) then
 		e.f+=1
-		e.sf=0
+		-- calculate next frame duration
+		e.sf=e.m[2]
+		if (e.f==#(animations[e.e][1])-1) then
+			e.sf=e.m[2]*(e.m[3]+1)
+		end
 	end
 	-- remove completed effect from table
 	if (e.f+1 > #(animations[e.e][1])) then
