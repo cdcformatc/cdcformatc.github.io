@@ -544,10 +544,12 @@ end
 -->8
 -- effects
 local animations = {
-	[1]={33,34,35,36,37,38} -- [1]=sparkle
+	[1]={{48,49,50},{3,2,0}},           -- [1]=indicator
+	[2]={{33,34,35,36,37,38},{0,2,0}}   -- [2]=sparkle
 }
 
-e_sparkle=1
+e_indicator=1
+e_sparkle=2
 
 function init_effects()
 	effects={}
@@ -561,35 +563,37 @@ function draw_effects()
 	foreach(effects, draw_effect)
 end
 
-function new_effect(e,x,y,s)
-	e={e=e,x=x,y=y,s=s,f=0,sf=-1}
-	return e
+function new_effect(e,x,y,m)
+	local meta=m or animations[e][2]
+	ef={e=e,x=x,y=y,s=meta[2],f=0,sf=0,rf=meta[1]}
+	add(effects, ef)
+	return ef
 end
 
 function sparkle(x,y)
-	-- sparkle_speed = 2
-	e=new_effect(e_sparkle,x,y,2)
-	add(effects, e)
+	e=new_effect(e_sparkle,x,y)
+	return e
 end
 
 function update_effect(e)
 	-- increment subframe
 	e.sf+=1
-	if (e.sf>=e.s) then
+	-- check subframe against frame total
+	local t=(e.f==0) and (e.rf*e.s-1) or e.s
+	if (e.sf>=t) then
 		e.f+=1
 		e.sf=0
 	end
 	-- remove completed effect from table
-	if (e.f+1 > #animations[e.e]) then
+	if (e.f+1 > #(animations[e.e][1])) then
 		del(effects,e)
 	end
-	--printh("f "..e.f.."."..e.sf.." "..#animations[e.e])
 end
 
 function draw_effect(e)
 	--if (e.f+1 > #animations[e.e]) return false
 	-- get the animation and then the frame of the animation
-	local frame = animations[e.e][e.f+1]
+	local frame = animations[e.e][1][e.f+1]
 	spr(frame, e.x, e.y)
 end
 
