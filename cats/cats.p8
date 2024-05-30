@@ -40,20 +40,15 @@ function _update()
 end
 
 function _draw()
-	cls(12)
-	camera()
+	cls(1)
 
 	-- reset palette
 	reset_pal()
 
-	-- print version
-	local vstr="v"..version
-	print(vstr,128-(#vstr-1)*char_width,1,0)
-
 	set_camera()
-	draw_map()
 	draw_cats()
 	draw_effects()
+	draw_map()
 
 	if debug then
 		debug_cat(cat1)
@@ -64,6 +59,11 @@ function _draw()
 		print("game over!",44,44,7)
 		print("press ❎ to play again!",18,72,7)
 	end
+
+	camera()
+	-- print version
+	local vstr="v"..version
+	print(vstr,128-(#vstr-1)*char_width,1,0)
 end
 
 --debug and printing
