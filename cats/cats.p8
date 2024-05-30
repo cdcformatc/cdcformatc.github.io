@@ -321,7 +321,7 @@ function move_actor_y(a)
 	local moving_down=(a.dy>0)
 	if (moving_down) then
 		-- bottom
-		y = a.y + a.dy + a.fh
+		y = a.y + a.dy + a.fh +1
 	else
 		-- top
 		y = a.y + a.dy
