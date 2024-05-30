@@ -112,10 +112,19 @@ state_sitting=8
 state_loafing=9
 state_sleeping=10
 
+state_strs={"init","unknown", "dead",
+	"standing",
+	"jumping",
+	"falling",
+	"running",
+	"sitting",
+	"loafing",
+	"sleeping"}
+
 -- timer constants
-local sit_time=0.5*60
+local sit_time=2*60
 local loaf_time=3*60
-local sleep_time=6*60
+local sleep_time=3*60
 
 function is_idle_state(state)
 	return (state==state_sitting or state==state_loafing or state==state_sleeping)
@@ -193,10 +202,19 @@ function set_cat_state(cat)
 			new_state=state_running
 		else
 			local idle_time = cat.t*cat.lazy_factor
-			new_state=state_standing
-			if (idle_time>=sit_time) new_state=state_sitting
-			if (idle_time>=loaf_time) new_state=state_loafing
-			if (idle_time>=sleep_time) new_state=state_sleeping
+			local l_sit = cat.p==0 and sit_time or -1
+
+			if (old_state == state_standing) then
+				if (idle_time>=l_sit) new_state=state_sitting
+			elseif (old_state==state_sitting) then
+				if (idle_time>=loaf_time) new_state=state_loafing
+			elseif (old_state==state_loafing) then
+				if (idle_time>=sleep_time) new_state=state_sleeping
+			elseif (old_state==state_sleeping) then
+				new_state=state_sleeping
+			else
+				new_state=state_standing
+			end
 		end
 	else
 		--printh("n: "..cat.n.."is in air")
@@ -214,12 +232,8 @@ function set_cat_state(cat)
 	if (new_state!=old_state and new_state!=state_unknown) then
 		-- set state
 		cat.state=new_state
-		printh(cat.n.." state "..old_state.." to "..new_state)
-
-		if (not is_idle_state(new_state)) then
-			-- reset idle timer
-			cat.t=0
-		end
+		cat.t=0
+		printh(cat.n.." state "..state_strs[old_state].." to "..state_strs[new_state])
 	else
 		-- increment idle timer
 		cat.t+=1
@@ -349,6 +363,9 @@ end
 function move_cat(cat)
 	-- apply movement from last frame
 	move_actor(cat)
+
+	-- update cat state
+	set_cat_state(cat)
 
 	-- determine x speed
 	local dx=dx_move
