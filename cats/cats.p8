@@ -18,6 +18,9 @@ function _init()
 	main_cat=cats[1]
 	other_cat=cats[2]
 
+	-- set camera
+	set_camera(main_cat.x,main_cat.y)
+
 	-- make effects
 	init_effects()
 end
@@ -26,6 +29,7 @@ function _update()
 	g_timer+=1
 
 	if (not game_over) then
+		move_camera()
 		update_effects()
 		check_swap()
 
@@ -45,7 +49,6 @@ function _draw()
 	-- reset palette
 	reset_pal()
 
-	set_camera()
 	draw_cats()
 	draw_effects()
 	draw_map()
@@ -644,13 +647,37 @@ end
 
 -->8
 --map?
-function set_camera()
-	local cx=(cats[1].x+cats[2].x)/2
-	local cy=(cats[1].y+cats[2].y)/2
+cam={x=0,y=0}
+max_cam_d = 8
+
+function smooth_camera(new, old)
+	local dx=new.x-old.x
+	local dy=new.y-old.y
+
+	if (abs(dx) > max_cam_d) then
+		dx = sgn(dx) * max_cam_d
+	end
+	if (abs(dy)>max_cam_d) then
+		dy = sgn(dy) * max_cam_d
+	end
+
+	res={x=old.x + dx,y=old.y + dy}
+	return res
+end
+
+function move_camera()
+	local p0={x=main_cat.x,y=main_cat.y}
+	cam=smooth_camera(p0,cam)
+
 	camera(
-		flr(cx - 64),
-		flr(cy - 64)
+		flr(cam.x - 64),
+		flr(cam.y - 64)
 	)
+end
+
+function set_camera(x,y)
+	cam.x=x
+	cam.y=y
 end
 
 function draw_map()
