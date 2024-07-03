@@ -255,7 +255,7 @@ b_act=5
 dy_gravity=0.4
 
 dy_jump=-15*dy_gravity
-dy_float=-.5*dy_gravity
+dy_float=-.33*dy_gravity
 dy_down=.75*dy_gravity
 ddy_slow=0.98
 
