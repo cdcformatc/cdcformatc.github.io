@@ -31,11 +31,7 @@ function _update()
 	if (not game_over) then
 		move_camera()
 		update_effects()
-		check_swap()
-
-		do_action(main_cat)
-		do_action(other_cat)
-
+		check_action()
 		move_cat(main_cat)
 		move_cat(other_cat)
 	else
@@ -251,7 +247,8 @@ b_left=0
 b_right=1
 b_up=2
 b_down=3
-b_swp=4
+b_jmp=4
+--b_swp=4
 b_act=5
 
 -- movement constants
@@ -385,17 +382,22 @@ function move_cat(cat)
 	end
 	-- up
 	if (btn(b_up,cat.p)) then
-		if (is_on_floor(cat)) then
-			-- jump
-			sfx(0)
-			cat.dy+=dy_jump
-			printh("jump")
-		elseif (is_falling(cat)) then
+		if (is_falling(cat)) then
 			-- float
 			cat.dy+=dy_float
 			printh("float")
 		end
 	end
+	-- jump
+	if (btn(b_jmp,cat.p)) then
+		if (is_on_floor(cat)) then
+			-- jump
+			sfx(0)
+			cat.dy+=dy_jump
+			printh("jump")
+		end
+	end
+
 	--down
 	--if (btnp(b_down,cat.p)) then
 		--if (is_jumping(cat)) then
@@ -445,15 +447,26 @@ act_deb=1
 
 function do_action(cat)
 	local p = cat.p
-	if (btn(b_act,p)) then
+	local b=btn(b_act,p)
+	local d=btn(b_down,p)
+
+	if (b and not d) then
 		if (cat.last_act+act_deb>=g_timer) return false
-		--else
+		-- else
 		cat.last_act=g_timer
 		sparkle(cat.x,cat.y)
 		printh(cat.n.." action")
 	end
 	return true
 end
+
+function check_action()
+	check_swap()
+
+	do_action(main_cat)
+	do_action(other_cat)
+end
+
 
 -->8
 -- cat graphics
@@ -607,6 +620,7 @@ end
 -->8
 -- cat swap control
 local swp_deb=15
+local swp_act_deb=30
 
 function swap_cats(p)
 	-- debounce cat swap
@@ -621,8 +635,10 @@ function swap_cats(p)
 	-- play cat sfx
 	if (p==0) then
 		sfx(2+main_cat.n)
+		main_cat.last_act=g_timer+swp_act_deb
 	else
 		sfx(2+other_cat.n)
+		other_cat.last_act=g_timer+swp_act_deb
 	end
 
 	-- set cat state
@@ -637,8 +653,14 @@ end
 
 function check_swap()
 	-- check if swap button pressed
-	local s0=btn(b_swp,0)
-	local s1=btn(b_swp,1)
+	local b0=btn(b_act,0)
+	local b1=btn(b_act,1)
+	local d0=btn(b_down,0)
+	local d1=btn(b_down,1)
+
+	local s0 = b0 and d0
+	local s1 = b1 and d1
+
 	if (s0) swap_cats(0)
 	if (s1) swap_cats(1)
 	-- if neither swap button pressed then reset swap timer
