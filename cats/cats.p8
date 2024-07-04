@@ -579,11 +579,12 @@ function draw_effects()
 	foreach(effects, draw_effect)
 end
 
-function new_effect(e,x,y,m)
+function new_effect(e,x,y,fh,m)
+	local fh=fh
 	local meta=m or animations[e][2]
 	-- calculate first frame duration
 	local sf = meta[2]*meta[1]
-	ef={e=e,x=x,y=y,m=meta,f=0,sf=sf}
+	ef={e=e,x=x,y=y,m=meta,f=0,sf=sf,fh=fh}
 	add(effects, ef)
 	return ef
 end
@@ -614,7 +615,7 @@ function draw_effect(e)
 	--if (e.f+1 > #animations[e.e]) return false
 	-- get the animation and then the frame of the animation
 	local frame = animations[e.e][1][e.f+1]
-	spr(frame, e.x, e.y)
+	spr(frame,e.x,e.y,1,1,e.fh)
 end
 
 -->8
