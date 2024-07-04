@@ -443,7 +443,16 @@ end
 
 -->8
 -- cat actions
-act_deb=1
+sparkle_deb=1
+swipe_deb=5
+
+function do_swipe(cat)
+	cat.last_act=g_timer+swipe_deb
+	x = cat.x+6
+	if (cat.flip_h) x-=10
+	swipe(x,cat.y,cat.flip_h)
+	printh(cat.n.." swipe "..tostr(cat.flip_h))
+end
 
 function do_action(cat)
 	local p = cat.p
@@ -451,11 +460,9 @@ function do_action(cat)
 	local d=btn(b_down,p)
 
 	if (b and not d) then
-		if (cat.last_act+act_deb>=g_timer) return false
+		if (cat.last_act>=g_timer) return false
 		-- else
-		cat.last_act=g_timer
-		sparkle(cat.x,cat.y)
-		printh(cat.n.." action")
+		do_swipe(cat)
 	end
 	return true
 end
@@ -561,11 +568,13 @@ end
 -- effects
 local animations = {
 	[1]={{48,49,50},{5,2,1}},           -- [1]=indicator
-	[2]={{33,34,35,36,37,38},{0,2,0}}   -- [2]=sparkle
+	[2]={{33,34,35,36,37,38},{0,2,0}},  -- [2]=sparkle
+	[3]={{51,52,53,54},{1,2,1}}         -- [3]=swipe
 }
 
 e_indicator=1
 e_sparkle=2
+e_swipe=3
 
 function init_effects()
 	effects={}
@@ -591,6 +600,11 @@ end
 
 function sparkle(x,y)
 	e=new_effect(e_sparkle,x,y)
+	return e
+end
+
+function swipe(x,y,flip_h)
+	e=new_effect(e_swipe,x,y,flip_h)
 	return e
 end
 
