@@ -46,8 +46,8 @@ function _draw()
 	reset_pal()
 
 	draw_cats()
-	draw_effects()
 	draw_map()
+	draw_effects()
 
 	if debug then
 		debug_cat(cat1)
