@@ -629,6 +629,7 @@ function update_effect(e)
 	-- remove completed effect from table
 	if (e.f+1 > #(animations[e.e][1])) then
 		del(effects,e)
+		return
 	end
 end
 
