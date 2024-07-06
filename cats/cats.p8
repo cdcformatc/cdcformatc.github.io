@@ -292,14 +292,16 @@ function move_actor_x(a)
 		x=a.x+a.dx
 	end
 	-- check collision
-	if (solid(x,a.y+a.hh)) then
+	local top=a.y
+	local bottom=a.y+a.fh
+	if (solid(x,top) or solid(x,bottom)) then
 		--printh("hit wall")
 		-- stop x movement
 		a.dx=0
 		if (moving_right) then
 			-- find point left of wall and put cat there
 			x=flr(x)
-			while solid(x,a.y+a.hh) do
+			while (solid(x,top) or solid(x,bottom)) do
 				x-=1
 			end
 			a.x=x-a.fw
@@ -307,7 +309,7 @@ function move_actor_x(a)
 			-- left
 			-- find point right of wall and put cat there
 			x=ceil(x)
-			while solid(x,a.y+a.hh) do
+			while (solid(x,top) or solid(x,bottom)) do
 				x+=1
 			end
 			a.x=x
