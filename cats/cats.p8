@@ -600,22 +600,41 @@ function draw_effects()
 	foreach(effects, draw_effect)
 end
 
-function new_effect(e,x,y,fh,m)
-	local fh=fh
+function new_effect(e,x,y,flip_h,move_funs,meta)
 	local meta=m or animations[e][2]
 	-- calculate first frame duration
 	local sf = meta[2]*meta[1]
-	ef={e=e,x=x,y=y,m=meta,f=0,sf=sf,fh=fh}
+	ef={e=e,ox=x,oy=y,x=x,y=y,m=meta,f=0,el=0,sf=sf,fh=flip_h,mf=move_funs}
 	add(effects, ef)
 	return ef
 end
 
+function wiggle_y(e,freq,amp)
+	n_frames = #(animations[e.e][1])
+	dur_f = e.m[2]
+	--angle is based on
+	--  number of elapsed frames e.el
+	--  total animation duration (n_frames*dur_f)
+	--  frequency multiplier freq
+	theta=freq*e.el/(n_frames*dur_f)
+	dy=amp*sin(theta)
+	n=e.oy+dy
+	--printh(e.f.." sin "..theta.." "..dy.." "..n)
+	return n
+end
+
+
 function sparkle(x,y)
-	e=new_effect(e_sparkle,x,y)
+	local mf = {}
+	mf.y={wiggle_y,1,2}-- function,frequency,amplitude
+	mf.x=false
+	e=new_effect(e_sparkle,x,y,false,mf)
 	return e
 end
 
 function update_effect(e)
+	-- inc elapsed counter
+	e.el+=1
 	-- dec subframe
 	e.sf-=1
 	if (e.sf<=0) then
@@ -631,6 +650,16 @@ function update_effect(e)
 		del(effects,e)
 		return
 	end
+	-- maybe call move functions
+	local x,y = e.x, e.y
+	if (e.mf and e.mf.y) then
+		y=e.mf.y[1](e, e.mf.y[2], e.mf.y[3])
+	end
+	if (e.mf and e.mf.x) then
+		x=e.mf.x[1](e, e.mf.x[2], e.mf.x[3])
+	end
+	e.x=x
+	e.y=y
 end
 
 function draw_effect(e)
