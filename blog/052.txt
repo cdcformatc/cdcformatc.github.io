@@ -1,0 +1,37 @@
+2024-07-06
+Version 0.5.2 Walls and Ceilings and Floors, oh my!
+
+jumping was feeling wierd, i would try to run and jump and i would miss the timing on the jump. a little more 
+investigation found that there was a problem with collision.
+
+the collision with the ceilings and floors was implemented using the cat's half width to find the middlest pixel, and 
+checking the tile directly above/below that pixel for solidity.
+this means when moving off an edge, the cat would fall when half of it's body was still on the floor. jumping into a 
+ceiling was slightly different. the horizontal wall collision correctly stopped the cat from entering into the ceiling,
+but only if the cat was facing that tile. if the cat faced away from the tile, its butt could enter the ceiling tile.
+
+a similar bug was present for horizontal movement into a partial wall. depending on where that half height pixel landed
+the cat could enter the wall tile and usually was pushed up to the floor. i don't hate this behaviour it kind of feels 
+like the cat is pulling itself up, in the future i would like to maybe revisit this as a gameplay element. for now 
+it looks and feels a bit jank so i went ahead and implemented the same kind of fix detailed below. 
+
+the fix ended up being fairly simple, instead of checking one point for solidity, check two points. instead of using 
+the half width and checking the tile there for solidity, check the tile to the left and the tile to the right. below 
+when moving down or above when moving up. if either tiles are solid, then halt movement.
+
+is_on_floor needed to be fixed as well since that decides if you can jump or not. there was a fun loop where the cat 
+would fall, get pushed up, and not be standing on the floor so it would fall again. jumping was not allowed since the
+cat was continuously falling.
+
+writing this now it seems a little obvious that just checking one point would not work. i don't fault myself for that
+i went with the implementation that mostly worked without going overboard. i definitely knew that just picking the 
+left or bottom for collisions was not the right move, because i was already using the half width and half height to 
+find the middlest pixel. getting something written is better than getting the perfect thing written in the first place.
+i can't tell you if this implementation is perfect either, it is definitely a big improvement.
+
+while working on this i had another think about how to implement half walls, and i think it is actually more
+complicated than i anticipated, and i anticipated that they would be fairly complicated. even though i havent fully 
+thought out the half walls, checking two points is definitely a move in the right direction from here. with this 
+additional insight i think that half walls will be delayed even further. there are definitely more important and
+(hopefully) less complicated things to work on first. 
+
