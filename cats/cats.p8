@@ -134,7 +134,12 @@ function is_idle(cat)
 end
 
 function is_on_floor(cat)
-	return solid(cat.x+cat.hw, cat.y+cat.fh+1, false)
+	local bottom=cat.y+cat.fh+1
+	-- leftmost pixel
+	local left = solid(cat.x, bottom, false)
+	-- rightmost pixel
+	local right = solid(cat.x+cat.fw, bottom, false)
+	return left or right
 end
 
 function is_falling(cat)
@@ -326,16 +331,17 @@ function move_actor_y(a)
 		-- top
 		y = a.y + a.dy
 	end
-
-	-- check collision
-	if (solid(a.x+a.hw,y,not moving_down)) then
+	-- check collisions
+	local left=a.x
+	local right=a.x+a.fw
+	if ((solid(left,y) or solid(right,y))) then
 		-- stop y movement
 		a.dy=0
 		if (moving_down) then
 			--printh("hit floor")
 			-- find point above ground and put cat there
 			y=flr(y)
-			while solid(a.x+a.hw,y) do
+			while (solid(left,y) or solid(right,y)) do
 				y-=1
 			end
 			a.y=y-a.fh
@@ -343,8 +349,7 @@ function move_actor_y(a)
 			--moving up
 			--printh("hit ceiling")
 			y=ceil(y)
-			while solid(a.x+a.hw,y) do
-				printh(y)
+			while (solid(left,y) or solid(right,y)) do
 				y += 1
 			end
 			a.y=y
