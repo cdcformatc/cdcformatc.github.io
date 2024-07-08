@@ -267,8 +267,9 @@ ddy_slow=0.98
 dx_air=.60
 dx_move=2
 
+-- swipe
 ddx_swipe=1
-ddx_swipe_max=4.0
+ddx_swipe_max=1.5
 dddx_swipe=.888
 
 -- friction
