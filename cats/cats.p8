@@ -664,10 +664,12 @@ e_rainbow=4
 
 function init_effects()
 	effects={}
+	espawners={}
 end
 
 function update_effects()
 	foreach(effects,update_effect)
+	foreach(espawners,update_espawner)
 end
 
 function draw_effects()
@@ -696,7 +698,6 @@ function wiggle_y(e,freq,amp)
 	--printh(e.f.." sin "..theta.." "..dy.." "..n)
 	return n
 end
-
 
 function sparkle(x,y)
 	local mf = {}
@@ -749,6 +750,38 @@ function draw_effect(e)
 	spr(frame,e.x,e.y,1,1,e.fh)
 end
 
+function espawner_proc(es)
+	-- find x,y,flip from proc(ctx)
+	x,y,f=es.p(es.c)
+	-- create effect
+	es.e(x,y,f)
+end
+
+function new_espawner(life,interval,effect,proc,ctx)
+	local es={e=effect,p=proc,d=0,l=life,i=interval,c=ctx}
+	add(espawners,es)
+	-- proc on frame 0
+	espawner_proc(es)
+	return es
+end
+
+function update_espawner(es)
+	es.l-=1
+	if (es.l <= 0) then
+		del(espawners,es)
+		return
+	end
+	es.d+=1
+	local x=0
+	local y=0
+	local f=0
+	if (es.d==es.i) then
+		-- proc now
+		espawner_proc(es)
+		-- reset duration
+		es.d=0
+	end
+end
 -->8
 -- cat swap control
 local swp_deb=15
