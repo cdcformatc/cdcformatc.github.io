@@ -267,6 +267,9 @@ ddy_slow=0.98
 dx_air=.60
 dx_move=2
 
+-- boost
+ddx_boost=12
+
 -- swipe
 ddx_swipe=1
 ddx_swipe_max=1.5
@@ -471,6 +474,7 @@ end
 -- cat actions
 sparkle_deb=1
 swipe_deb=5
+boost_deb=30
 
 function check_swipe(x,y)
 	--todo check tile at x,y for a swipeable object
@@ -493,6 +497,43 @@ function do_swipe(cat)
 	printh(cat.n.." swipe "..tostr(cat.flip_h))
 end
 
+function do_boost(cat)
+	cat.last_act=g_timer+boost_deb
+
+	ddx_override = 1
+
+	-- limit diagonal boost
+	local b = ddx_boost
+	local b_diag = sqrt((b*b)/2)
+
+	-- check for diagonal movement
+	local u = btn(b_up,cat.p)
+	local d = btn(b_down,cat.p)
+
+	if btn(b_left,cat.p) then
+		if u then
+			cat.dx=-b_diag
+			cat.dy=-b_diag
+		elseif d then
+			cat.dx=-b_diag
+			cat.dy=b_diag
+		else
+			cat.dx=-b
+		end
+	end
+	if btn(b_right,cat.p) then
+		if u then
+			cat.dx=b_diag
+			cat.dy=-b_diag
+		elseif d then
+			cat.dy=b_diag
+			cat.dx=b_diag
+		else
+			cat.dx=b
+		end
+	end
+end
+
 function do_action(cat)
 	local p = cat.p
 	local b=btn(b_act,p)
@@ -501,7 +542,11 @@ function do_action(cat)
 	if (b and not d) then
 		if (cat.last_act>=g_timer) return false
 		-- else
-		do_swipe(cat)
+		if (cat.n==0) then
+			do_swipe(cat)
+		else
+			do_boost(cat)
+		end
 	end
 	return true
 end
