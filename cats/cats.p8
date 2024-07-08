@@ -271,6 +271,8 @@ ddx_swipe=1
 ddx_swipe_max=4.0
 dddx_swipe=.888
 
+-- friction
+ddx_override=0
 ddx_air=0.888
 ddx_slow=.725
 
@@ -378,6 +380,7 @@ function move_cat(cat)
 
 	-- update cat state
 	set_cat_state(cat)
+	local on_floor=is_on_floor(cat)
 
 	-- determine x speed
 	local dx=dx_move
@@ -407,14 +410,13 @@ function move_cat(cat)
 	end
 	-- jump
 	if (btn(b_jmp,cat.p)) then
-		if (is_on_floor(cat)) then
+		if (on_floor) then
 			-- jump
 			sfx(0)
 			cat.dy+=dy_jump
 			printh("jump")
 		end
 	end
-
 	--down
 	--if (btnp(b_down,cat.p)) then
 		--if (is_jumping(cat)) then
@@ -424,19 +426,25 @@ function move_cat(cat)
 	if (btn(b_down,cat.p)) then
 		cat.dy+=dy_down
 	end
-
-	-- apply x friction
-	if (is_on_floor(cat)) then
-		cat.dx*=ddx_slow
+	-- maybe apply x friction?
+	if (ddx_override>0) then
+		-- do not apply x friction
+		ddx_override-=1
 	else
-		cat.dx*=ddx_air
+		-- apply x friction
+		if (on_floor) then
+			cat.dx*=ddx_slow
+		else
+			cat.dx*=ddx_air
+		end
+	end
+	-- apply gravity
+	if (not on_floor) then
 		-- do gravity
 		cat.dy+=dy_gravity
 	end
-
 	--apply y friction
 	cat.dy*=ddy_slow
-
 	-- cap speed
 	if (abs(cat.dx)<min_dx) cat.dx=0
 	if (cat.dx>max_dx) cat.dx=max_dx
