@@ -266,6 +266,11 @@ ddy_slow=0.98
 
 dx_air=1
 dx_move=2
+
+ddx_swipe=1
+ddx_swipe_max=4.0
+dddx_swipe=.888
+
 ddx_air=0.888
 ddx_slow=.725
 
@@ -377,6 +382,11 @@ function move_cat(cat)
 	-- determine x speed
 	local dx=dx_move
 	if (is_airborne(cat)) dx=dx_air
+	if (ddx_swipe>1) then
+		printh(ddx_swipe.." "..dx)
+		dx=dx*ddx_swipe
+		ddx_swipe*=dddx_swipe
+	end
 
 	-- apply user input
 	-- left
@@ -462,6 +472,7 @@ function do_swipe(cat)
 	cat.last_act=g_timer+swipe_deb
 	x = cat.x+6
 	y = cat.y
+	ddx_swipe = ddx_swipe_max
 	if (cat.flip_h) x-=12
 	-- add effect
 	e=new_effect(e_swipe,x,y,cat.flip_h)
