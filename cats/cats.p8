@@ -532,6 +532,12 @@ function do_boost(cat)
 			cat.dx=b
 		end
 	end
+	--e=rainbow(cat.x,cat.y,cat.flip_h)
+	es=rainbow_spawner(10,1,proc_rainbow,cat)
+end
+
+function proc_rainbow(cat)
+	return cat.x, cat.y, cat.flip_h
 end
 
 function do_action(cat)
@@ -782,6 +788,11 @@ function update_espawner(es)
 		es.d=0
 	end
 end
+
+function rainbow_spawner(life,interval,proc,ctx)
+	return new_espawner(life,interval,rainbow,proc,ctx)
+end
+
 -->8
 -- cat swap control
 local swp_deb=15
