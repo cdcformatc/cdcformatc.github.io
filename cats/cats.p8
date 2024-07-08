@@ -280,8 +280,8 @@ ddx_override=0
 ddx_air=0.888
 ddx_slow=.725
 
-max_dx=4
-max_dy=7
+--max_dx=4
+--max_dy=7
 
 min_dx=0.25
 
@@ -451,10 +451,10 @@ function move_cat(cat)
 	cat.dy*=ddy_slow
 	-- cap speed
 	if (abs(cat.dx)<min_dx) cat.dx=0
-	if (cat.dx>max_dx) cat.dx=max_dx
-	if (cat.dx<-max_dx) cat.dx=-max_dx
-	if (cat.dy>max_dy) cat.dy=max_dy
-	if (cat.dy<-max_dy) cat.dy=-max_dy
+	--if (cat.dx>max_dx) cat.dx=max_dx
+	--if (cat.dx<-max_dx) cat.dx=-max_dx
+	--if (cat.dy>max_dy) cat.dy=max_dy
+	--if (cat.dy<-max_dy) cat.dy=-max_dy
 
 	-- do stats
 	--g_max_dx=max(g_max_dx, cat.dx)
