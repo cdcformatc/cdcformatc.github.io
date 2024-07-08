@@ -257,14 +257,14 @@ b_jmp=4
 b_act=5
 
 -- movement constants
-dy_gravity=0.4
+dy_gravity=0.5
 
 dy_jump=-15*dy_gravity
 dy_float=-.33*dy_gravity
 dy_down=.75*dy_gravity
 ddy_slow=0.98
 
-dx_air=1
+dx_air=.60
 dx_move=2
 
 ddx_swipe=1
