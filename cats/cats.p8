@@ -23,6 +23,9 @@ function _init()
 
 	-- make effects
 	init_effects()
+
+	-- init entities
+	init_entities()
 end
 
 function _update()
@@ -30,6 +33,7 @@ function _update()
 
 	if (not game_over) then
 		move_camera()
+		update_entities()
 		update_effects()
 		check_action()
 		move_cat(main_cat)
@@ -876,6 +880,36 @@ end
 function set_camera(x,y)
 	cam.x=x
 	cam.y=y
+end
+
+function init_entities()
+	entities={}
+end
+
+function update_entities()
+	local old_entities = entities
+	entities = {}
+	-- camera offset
+	local x = cam.x/8
+	local y = cam.y/8
+	for x=(cam.x-64)/8,(cam.x+64)/8 do
+		for y=(cam.y-64)/8,(cam.y+64)/8 do
+			local s=mget(x,y)
+			if (fget(s,7)) then
+				if s==24 then
+					s=24+flr(rnd(4))
+					mset(x,y,s)
+				end
+				add(entities,{s=s,x=x,y=y})
+			end
+		end
+	end
+	if (g_timer&10==0) then
+		printh("entities")
+		for e in all(entities) do
+			printh("s:"..e.s.." x: "..e.x.." y: "..e.y)
+		end
+	end
 end
 
 function draw_map()
